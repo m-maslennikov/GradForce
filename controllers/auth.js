@@ -230,7 +230,7 @@ exports.postResetRequest = (req, res, next) => {
         subject: 'GradForce - Reset password',
         html: `
         <h1>You requested password reset</h1>
-        <p>Please click <a href="http://localhost:3000/auth/reset/${token}">this link</a> to reset your password</p>`
+        <p>Please click <a href="${process.env.HOSTNAME}/auth/reset/${token}">this link</a> to reset your password</p>`
         ,
       });
     }).catch((err) => {
