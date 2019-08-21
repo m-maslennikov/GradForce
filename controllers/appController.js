@@ -1,24 +1,10 @@
-// const Test = require('../models/test');
-// const codility = require('../utils/codility');
-
 // Models
 const User = require('../models/user');
 const Skill = require('../models/skill');
+
+// Utils
 const codility = require('../utils/codility');
 
-// exports.postCodility = (req, res) => {
-//   const { testID } = req.body;
-//   codility.get(`tests/${testID}`, (error, result) => {
-//     if (error) {
-//       return console.log(error);
-//     }
-//     const test = new Test(result);
-//     test.save().then(() => {
-//       console.log('Test Added');
-//       res.redirect('/admin/codility');
-//     }).catch((err) => err);
-//   });
-// };
 
 exports.getRoot = (req, res) => {
   res.redirect('/auth/register');
@@ -60,8 +46,11 @@ exports.getDashboard = async (req, res) => {
       accountStatus,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -85,8 +74,11 @@ exports.getMyProfile = async (req, res) => {
       skills,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -108,8 +100,11 @@ exports.getSkills = async (req, res) => {
       skills,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -130,8 +125,11 @@ exports.saveMyProfile = async (req, res) => {
     await user.save();
     return res.redirect('/profile');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -146,8 +144,11 @@ exports.generateTestLink = async (req, res) => {
     await codility.generateTestLink(req.session.user.email, skillId);
     return res.redirect('/profile');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -159,8 +160,13 @@ exports.syncCodilitySkills = async (req, res) => {
   try {
     await codility.syncSkills();
     console.log('Codility skills synced');
-    res.redirect('/skills');
+    return res.redirect('/skills');
   } catch (error) {
     console.log(`Something wrong while syncin Codility skills: \n${error}`);
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
