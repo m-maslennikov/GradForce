@@ -1,0 +1,54 @@
+      <div class="sidebar" data-color="rose" data-background-color="black" data-image="/img/sidebar-1.jpg">
+        <!--
+          Tip 1: You can change the color of the sidebar using: data-color="purple | azure | green | orange | danger"
+          Tip 2: you can also add an image using data-image tag
+        -->
+        <div class="logo">
+          <a href="https://sdi3.herokuapp.com" class="simple-text logo-mini">
+            GF
+          </a>
+          <a href="https://sdi3.herokuapp.com" class="simple-text logo-normal">
+            Grad Force
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <ul class="nav">
+            <li class="nav-item <%= sidebarPos === 'dashboard' ? 'active' : '' %>">
+              <a class="nav-link" href="/dashboard">
+                <i class="material-icons">dashboard</i>
+                <p> Dashboard </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'myprofile' ? 'active' : '' %>">
+              <a class="nav-link" href="/profile">
+                <i class="material-icons">person</i>
+                <p> My Profile </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'students' ? 'active' : '' %>">
+              <a class="nav-link" href="/students">
+                <i class="material-icons">supervised_user_circle</i>
+                <p> Students </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'skills' ? 'active' : '' %>">
+              <a class="nav-link" href="/skills">
+                <i class="material-icons">supervised_user_circle</i>
+                <p> Skills </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'employers' ? 'active' : '' %>">
+              <a class="nav-link" href="/employers">
+                <i class="material-icons">supervisor_account</i>
+                <p> Employers </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'calendar' ? 'active' : '' %>">
+              <a class="nav-link" href="/calendar">
+                <i class="material-icons">date_range</i>
+                <p> Calendar </p>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>

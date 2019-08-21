@@ -1,0 +1,157 @@
+<% include ./partials/head %>
+<body class="">
+  <div class="wrapper">
+    <% include ./partials/sidebar %>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <% include ./partials/navbar %>
+      <!-- End Navbar -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-xl-6">
+              <div class="row">
+                <div class="card">
+                  <div class="card-header card-header-icon card-header-rose">
+                    <div class="card-icon">
+                      <i class="material-icons">perm_identity</i>
+                    </div>
+                    <h4 class="card-title">My Profile -
+                      <small class="category">Edit details</small>
+                    </h4>
+                  </div>
+                  <div class="card-body">
+                    <form method="POST" action="/profile/my/save">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="bmd-label-floating">ID</label>
+                            <input type="text" class="form-control" disabled value="<%= user._id ? user._id : '' %>">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="bmd-label-floating">Email address</label>
+                            <input type="email" class="form-control" disabled value="<%= user.email %>">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="bmd-label-floating">Fist Name</label>
+                            <input type="text" name="firstName" class="form-control" value="<%= user.firstName ? user.firstName : '' %>">
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label class="bmd-label-floating">Last Name</label>
+                            <input type="text" name="lastName" class="form-control" value="<%=user.lastName ? user.lastName : '' %>">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <div class="form-group">
+                            <label class="bmd-label-floating">Phone</label>
+                            <input type="text" name="phone" class="form-control" value="<%= user.phone ? user.phone : '' %>">
+                          </div>
+                        </div>
+                      </div>
+                      <button type="submit" class="btn btn-rose pull-right">Save Changes</button>
+                      <div class="clearfix"></div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="card">
+                  <div class="card-header card-header-icon card-header-rose">
+                    <div class="card-icon">
+                      <i class="material-icons">code</i>
+                    </div>
+                    <h4 class="card-title">My Skills -
+                      <small class="category">Choose your strongest skills</small>
+                    </h4>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <% if(skills.length > 0) { %>
+                      <% for (let skill of skills) { %>
+                      <div class="col-sm-3">
+                        <form method="POST" action="/profile/skill/test">
+                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                          <input type="hidden" name="skill_id" value="<%= skill._id %>">
+                          <button type="submit" class="btn btn-rose btn-block"><%= skill.name %></button>
+                        </form>
+                      </div>
+                      <div class="clearfix"></div>
+                      <% } %>
+                    </div>
+                    <% } else { %>
+                      <h4>No skills found</h4>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-6">
+              <div class="card">
+                <div class="card-header card-header-primary card-header-icon">
+                  <div class="card-icon">
+                    <i class="material-icons">assessment</i>
+                  </div>
+                  <h4 class="card-title">Test your skills</h4>
+                </div>
+                <div class="card-body">
+                  <div class="toolbar">
+                    <!-- Here you can write extra buttons/actions for the toolbar -->
+                  </div>
+                  <% if (!user.skills.length > 0) { %>
+                  <h4>Choose at least one skill you want to test</h4>
+                  <% } else { %>
+                  <div class="material-datatables">
+                    <table id="skillsTable" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
+                      <thead>
+                        <tr>
+                          <th>Skill</th>
+                          <th>Test Score</th>
+                          <th class="disabled-sorting">Test</th>
+                        </tr>
+                      </thead>
+                      <tfoot>
+                        <tr>
+                          <th>Skill</th>
+                          <th>Test Score</th>
+                          <th>Test</th>
+                        </tr>
+                      </tfoot>
+                      <tbody>
+                        <% for (let skill of user.skills) { %>
+                        <tr>
+                          <td><%= skill.name %></td>
+                          <td><%= skill.skillLevel %></td>
+                          <td><a href="<%= skill.test_link %>" class="btn btn-primary btn-sm">Run test</button></td>
+                        </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  </div>
+                  <% } %>
+                </div>
+                <!-- end content-->
+              </div>
+              <!--  end card  -->
+            </div>
+          </div>
+        </div>
+      </div>
+      <% include ./partials/footer %>
+    </div>
+  </div>
+  <% include ./partials/optionsPanel %>
+  <% include ./partials/scripts %>
+</body>
+
+</html>
