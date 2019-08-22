@@ -88,7 +88,7 @@ const generateTestLink = async (email, skillId) => {
     const result = await request(options);
     // console.log(result);
     await user.skills.push({
-      _id: skill._id,
+      skillId: skill._id,
       name: skill.name,
       test_link: result.candidates[0].test_link,
       session_url: result.candidates[0].session_url,
