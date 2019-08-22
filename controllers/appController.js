@@ -16,6 +16,7 @@ exports.getStudents = (req, res) => {
     res.render('students', {
       users,
       pageTitle: 'All students',
+      navbarTitle: 'All students',
       sidebarPos: 'students',
     });
   });
