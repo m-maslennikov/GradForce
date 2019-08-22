@@ -47,6 +47,21 @@ exports.getRegisterPage = (req, res, next) => {
     });
 };
 
+// SHOW REGISTER WIZARD PAGE
+exports.getRegisterWizardPage = (req, res, next) => {
+  res.render('./auth/register_wizard',
+    {
+      path: '/auth/register_wizard',
+      pageTitle: 'Register Wizard',
+      oldInput: {
+        email: '',
+        password: '',
+        confirmPassword: '',
+        role: '',
+      },
+      validationErrors: [],
+    });
+};
 
 // SHOW GENERATE RESET PASSWORD PAGE
 exports.getGenerateResetPasswordTokenPage = (req, res, next) => {

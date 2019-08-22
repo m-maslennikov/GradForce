@@ -14,6 +14,7 @@ const router = express.Router();
 router.get('/', authController.getLoginPage);
 router.get('/login', authController.getLoginPage);
 router.get('/register', authController.getRegisterPage);
+router.get('/register_wizard', authController.getRegisterWizardPage);
 router.get('/reset', authController.getGenerateResetPasswordTokenPage);
 router.get('/reset/:resetToken', authController.getSetNewPasswordPage);
 
