@@ -29,7 +29,6 @@
                           <th>Name</th>
                           <th>Email</th>
                           <th class="disabled-sorting">Skills</th>
-                          <th>Test Score</th>
                           <th class="disabled-sorting text-right">Actions</th>
                         </tr>
                       </thead>
@@ -38,7 +37,6 @@
                           <th>Name</th>
                           <th>Email</th>
                           <th>Skills</th>
-                          <th>Test Score</th>
                           <th class="text-right">Actions</th>
                         </tr>
                       </tfoot>
@@ -47,10 +45,26 @@
                         <tr>
                           <td><%= user.firstName + ' ' + user.lastName %></td>
                           <td><%= user.email %></td>
-                          <td><%= user.skills[1] %></td>
-                          <td>61</td>
+                          <td>
+                            <% if(user.skills.length > 0) { %>
+                              <% for (let skill of user.skills) { %>
+                                <div class="progress-container progress-primary">
+                                  <span class="progress-badge"><%= skill.name %></span>
+                                  <div class="progress">
+                                    <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="<%= skill.skillLevel %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= skill.skillLevel %>%;">
+                                    </div>
+                                  </div>
+                                </div>
+                              <% } %>
+                            <% } else { %>
+                              N/A
+                            <% } %>
+                          </td>
                           <td class="text-right">
-                            <a href="#" class="btn btn-link btn-info btn-just-icon like"><i class="material-icons">favorite</i></a>
+                            <button class="btn btn-link btn-just-icon" data-toggle="modal" data-target="#<%= user._id %>">
+                              <i class="material-icons">assignment_ind</i>
+                              <div class="ripple-container"></div>
+                            </button>
                             <a href="#" class="btn btn-link btn-warning btn-just-icon edit"><i class="material-icons">dvr</i></a>
                             <a href="#" class="btn btn-link btn-danger btn-just-icon remove"><i class="material-icons">close</i></a>
                           </td>
@@ -76,7 +90,73 @@
     </div>
   </div>
   <% include ./partials/optionsPanel %>
+  <% if(users.length > 0) { %>
+  <% for (let user of users) { %>
+  <div class="modal fade" id="<%= user._id %>" tabindex="-1" role="dialog" aria-labelledby="<%= user._id %>Label" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Quick review</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+            <i class="material-icons">clear</i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h4 class="card-title"><%= user.firstName + ' ' + user.lastName%></h4>
+          <div class="card-body">
+            <% if(user.skills.length > 0) { %>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead class=" text-primary">
+                    <tr>
+                      <th>Skill</th>
+                      <th>Level</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <% for (let skill of user.skills) { %>
+                  <tr>
+                    <td><%= skill.name %></td>
+                    <td>
+                      <div class="progress-container progress-primary">
+                        <div class="progress">
+                          <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="<%= skill.skillLevel %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= skill.skillLevel %>%;">
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+            <% } else { %>
+              <p>No skills are confirmed yet</p>
+            <% } %>
+          </div>
+          <div class="form-group bmd-form-group is-filled">
+            <label class="label-control bmd-label-static">Interview Date</label>
+            <input type="text" class="form-control datetimepicker" value="">
+            <span class="material-input"></span>
+            <span class="material-input"></span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-link">Send invite</button>
+          <button type="button" class="btn btn-danger btn-link" data-dismiss="modal">Close<div class="ripple-container"><div class="ripple-decorator ripple-on ripple-out" style="left: 43.0781px; top: 22px; background-color: rgb(244, 67, 54); transform: scale(8.50976);"></div><div class="ripple-decorator ripple-on ripple-out" style="left: 43.0781px; top: 22px; background-color: rgb(244, 67, 54); transform: scale(8.50976);"></div></div></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <% } %>
+  <% } %>
   <% include ./partials/scripts %>
+  <script>
+    $(document).ready(function() {
+      //init DateTimePickers
+      md.initFormExtendedDatetimepickers();
+    });
+  </script>
 </body>
 
 </html>
