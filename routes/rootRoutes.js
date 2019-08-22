@@ -11,6 +11,8 @@ router.get('/', isAuth, controller.getRoot);
 router.get('/dashboard', isAuth, controller.getDashboard);
 router.get('/profile', isAuth, controller.getMyProfile);
 router.post('/profile/my/save', isAuth, controller.saveMyProfile);
+router.post('/profile/my/education', isAuth, controller.saveMyEducation);
+router.post('/profile/my/work', isAuth, controller.saveMyWork);
 router.post('/profile/skill/test', isAuth, controller.generateTestLink);
 
 router.get('/skills', isAuth, controller.getSkills);

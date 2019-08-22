@@ -30,6 +30,28 @@ const userSchemaNew = new Schema({
       session_url: String,
     },
   ],
+  education: [
+    {
+      level: String,
+      schoolName: String,
+      courseName: String,
+      startDate: String,
+      endDate: String,
+      isCurrent: Boolean,
+    },
+  ],
+  work: [
+    {
+      companyName: String,
+      jobRole: String,
+      jobDescription: String,
+      startDate: String,
+      endDate: String,
+      isCurrent: Boolean,
+      country: String,
+      city: String,
+    },
+  ],
 });
 
 module.exports = mongoose.model('User', userSchemaNew);

@@ -10,6 +10,7 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-xl-6">
+              <!--- My Profile -->
               <div class="row">
                 <div class="card">
                   <div class="card-header card-header-icon card-header-rose">
@@ -65,38 +66,174 @@
                   </div>
                 </div>
               </div>
+              <!--- End My Profile -->
+              <!--- My Education -->
               <div class="row">
-                <div class="card">
-                  <div class="card-header card-header-icon card-header-rose">
-                    <div class="card-icon">
-                      <i class="material-icons">code</i>
-                    </div>
-                    <h4 class="card-title">My Skills -
-                      <small class="category">Choose your strongest skills</small>
-                    </h4>
-                  </div>
-                  <div class="card-body">
-                    <div class="row">
-                      <% if(skills.length > 0) { %>
-                      <% for (let skill of skills) { %>
-                      <div class="col-sm-3">
-                        <form method="POST" action="/profile/skill/test">
-                          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                          <input type="hidden" name="skill_id" value="<%= skill._id %>">
-                          <button type="submit" class="btn btn-rose btn-block"><%= skill.name %></button>
-                        </form>
+                  <div class="card">
+                    <div class="card-header card-header-icon card-header-rose">
+                      <div class="card-icon">
+                        <i class="material-icons">perm_identity</i>
                       </div>
-                      <div class="clearfix"></div>
-                      <% } %>
+                      <h4 class="card-title">My Education -
+                        <small class="category">Edit details</small>
+                      </h4>
                     </div>
-                    <% } else { %>
-                      <h4>No skills found</h4>
-                    <% } %>
+                    <div class="card-body">
+                      <form method="POST" action="/profile/my/education">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="bmd-label-floating">Level</label>
+                              <input type="text" name="level" class="form-control" value="<%= user.education[0].level ? user.education[0].level : '' %>">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <label class="bmd-label-floating">School Name</label>
+                                <input type="text" name="schoolName" class="form-control" value="<%= user.education[0].schoolName ? user.education[0].schoolName : '' %>">
+                              </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <label class="bmd-label-floating">Course</label>
+                                <input type="text" name="courseName" class="form-control" value="<%= user.education[0].courseName ? user.education[0].courseName : '' %>">
+                              </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="bmd-label-floating">Start Date</label>
+                              <input type="text" name="educationStartDate" class="form-control datepicker" value="<%= user.education[0].startDate ? user.education[0].startDate : '' %>">
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="bmd-label-floating">End Date</label>
+                              <input type="text" name="educationEndDate" class="form-control datepicker" value="<%=user.education[0].endDate ? user.education[0].endDate : '' %>">
+                            </div>
+                          </div>
+                        </div>
+                        <button type="submit" class="btn btn-rose pull-right">Save Changes</button>
+                        <div class="clearfix"></div>
+                      </form>
+                    </div>
                   </div>
                 </div>
-              </div>
+                <!--- End My Education -->
+                <!--- My Work Experience -->
+              <div class="row">
+                  <div class="card">
+                    <div class="card-header card-header-icon card-header-rose">
+                      <div class="card-icon">
+                        <i class="material-icons">perm_identity</i>
+                      </div>
+                      <h4 class="card-title">My Work Experience -
+                        <small class="category">Edit details</small>
+                      </h4>
+                    </div>
+                    <div class="card-body">
+                      <form method="POST" action="/profile/my/work">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="bmd-label-floating">Job Role</label>
+                              <input type="text" name="jobRole" class="form-control" value="<%= user.work[0].jobRole ? user.work[0].jobRole : '' %>">
+                            </div>
+                          </div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <label class="bmd-label-floating">Company Name</label>
+                                <input type="text" name="companyName" class="form-control" value="<%= user.work[0].companyName ? user.work[0].companyName : '' %>">
+                              </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <label class="bmd-label-floating">Job Description</label>
+                                <input type="text" name="jobDescription" class="form-control" value="<%= user.work[0].jobDescription ? user.work[0].jobDescription : '' %>">
+                              </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="bmd-label-floating">Start Date</label>
+                              <input type="text" name="wstartDate" class="form-control datepicker" value="<%= user.work[0].startDate ? user.work[0].startDate : '' %>">
+                            </div>
+                          </div>
+                          <div class="col-md-6">
+                            <div class="form-group">
+                              <label class="bmd-label-floating">End Date</label>
+                              <input type="text" name="wendDate" class="form-control datepicker" value="<%=user.work[0].endDate ? user.work[0].endDate : '' %>">
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="bmd-label-floating">City</label>
+                                <input type="text" name="city" class="form-control" value="<%= user.work[0].city ? user.work[0].city : '' %>">
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label class="bmd-label-floating">Country</label>
+                                <input type="text" name="country" class="form-control" value="<%=user.work[0].country ? user.work[0].country : '' %>">
+                              </div>
+                            </div>
+                          </div>
+                        <button type="submit" class="btn btn-rose pull-right">Save Changes</button>
+                        <div class="clearfix"></div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <!--- End My Work Experience -->
+              
             </div>
             <div class="col-xl-6">
+              <!-- Skill Test -->
+              <!-- My Skill-->
+              <div class="row"></div>
+                  <div class="card">
+                    <div class="card-header card-header-icon card-header-rose">
+                      <div class="card-icon">
+                        <i class="material-icons">code</i>
+                      </div>
+                      <h4 class="card-title">My Skills -
+                        <small class="category">Choose your strongest skills</small>
+                      </h4>
+                    </div>
+                    <div class="card-body">
+                      <div class="row">
+                        <% if(skills.length > 0) { %>
+                        <% for (let skill of skills) { %>
+                        <div class="col-sm-3">
+                          <form method="POST" action="/profile/skill/test">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="skill_id" value="<%= skill._id %>">
+                            <button type="submit" class="btn btn-rose btn-block"><%= skill.name %></button>
+                          </form>
+                        </div>
+                        <div class="clearfix"></div>
+                        <% } %>
+                      </div>
+                      <% } else { %>
+                        <h4>No skills found</h4>
+                      <% } %>
+                    </div>
+                  </div>
+                <!-- End My Skill-->
               <div class="card">
                 <div class="card-header card-header-primary card-header-icon">
                   <div class="card-icon">
@@ -142,6 +279,7 @@
                 </div>
                 <!-- end content-->
               </div>
+              <!-- End Skill Test -->
               <!--  end card  -->
             </div>
           </div>
@@ -152,6 +290,15 @@
   </div>
   <% include ./partials/optionsPanel %>
   <% include ./partials/scripts %>
+  <script>
+      $(document).ready(function() {
+        // initialise Datetimepicker and Sliders
+        md.initFormExtendedDatetimepickers();
+        if ($('.slider').length != 0) {
+          md.initSliders();
+        }
+      });
+    </script>
 </body>
 
 </html>

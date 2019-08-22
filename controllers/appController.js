@@ -134,6 +134,57 @@ exports.saveMyProfile = async (req, res) => {
   }
 };
 
+// ===============
+// SAVE MY EDUCATION
+// ===============
+exports.saveMyEducation = async (req, res) => {
+  console.log(`Saving profile: ${req.session.user.email}`);
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await user.education.push({
+      level: req.body.level,
+      schoolName: req.body.schoolName,
+      courseName: req.body.courseName,
+      startDate: req.body.educationStartDate,
+      endDate: req.body.educationEndDate,
+    });
+    await user.save();
+    return res.redirect('/profile');
+  } catch (error) {
+    console.log(error);
+    return res.status(500).redirect('/profile');
+  }
+};
+
+// ===============
+// SAVE MY WORK
+// ===============
+exports.saveMyWork = async (req, res) => {
+  console.log(`Saving profile: ${req.session.user.email}`);
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await user.work.push({
+      companyName: req.body.companyName,
+      jobRole: req.body.jobRole,
+      jobDescription: req.body.jobDescription,
+      startDate: req.body.wstartDate,
+      endDate: req.body.wendDate,
+      country: req.body.country,
+      city: req.body.city,
+    });
+    await user.save();
+    return res.redirect('/profile');
+  } catch (error) {
+    console.log(error);
+    return res.status(500).redirect('/profile');
+  }
+};
 
 // ==================
 // GENERATE TEST LINK
