@@ -21,13 +21,17 @@ const userSchemaNew = new Schema({
   firstName: String,
   lastName: String,
   phone: Number,
+  isInterviewed: Boolean,
+  isApproved: Boolean,
+  adminNotes: String,
   skills: [
     {
       skillId: { type: Schema.Types.ObjectId, ref: 'Skill' },
       name: String,
-      skillLevel: { type: Number, default: 0 },
+      skillLevel: { type: String, default: '' },
       test_link: String,
-      session_url: String,
+      isVerified: Boolean,
+      isTested: Boolean,
     },
   ],
   education: [
