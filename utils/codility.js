@@ -3,11 +3,6 @@ const Skill = require('../models/skill');
 const User = require('../models/user');
 
 const auth = `Bearer ${process.env.CODILITY_API_KEY}`;
-<<<<<<< HEAD
-
-=======
-const auth2 = 'Bearer GDiaVqs2aIIAhDaNHkmi';
->>>>>>> 27f890c56214bacd5c0325e1f53c379b2fb90458
 
 const get = (apiPath, callback) => {
   const rootURL = 'https://codility.com/api/';
