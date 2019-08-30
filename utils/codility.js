@@ -3,7 +3,7 @@ const Skill = require('../models/skill');
 const User = require('../models/user');
 
 const auth = `Bearer ${process.env.CODILITY_API_KEY}`;
-const auth2 = 'Bearer ckPiILjwLNFjVgsOpXb9';
+
 
 const get = (apiPath, callback) => {
   const rootURL = 'https://codility.com/api/';
@@ -31,7 +31,7 @@ const syncSkills = async () => {
     json: true,
     headers: {
       'User-Agent': 'Request-Promise',
-      Authorization: auth2,
+      Authorization: auth,
     },
   };
 
@@ -70,7 +70,7 @@ const generateTestLink = async (email, skillId) => {
       json: true,
       headers: {
         'User-Agent': 'Request-Promise',
-        Authorization: auth2,
+        Authorization: auth,
       },
       body: {
         candidates: [{
@@ -105,7 +105,7 @@ const getAccountStatus = async () => {
     json: true,
     headers: {
       'User-Agent': 'Request-Promise',
-      Authorization: auth2,
+      Authorization: auth,
     },
   };
 
