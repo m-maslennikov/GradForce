@@ -13,7 +13,11 @@ router.get('/profile', isAuth, controller.getMyProfile);
 router.get('/profile/:id', isAuth, controller.getProfileById);
 router.post('/profile/my/save', isAuth, controller.saveMyProfile);
 router.post('/profile/my/education', isAuth, controller.saveMyEducation);
+router.post('/profile/my/edit-education', isAuth, controller.editMyEducation);
+router.post('/profile/my/delete-education', isAuth, controller.deleteMyEducation);
 router.post('/profile/my/work', isAuth, controller.saveMyWork);
+router.post('/profile/my/edit-work', isAuth, controller.editMyWork);
+router.post('/profile/my/delete-work', isAuth, controller.deleteMyWork);
 router.post('/profile/skill/test', isAuth, controller.generateTestLink);
 
 router.get('/skills', isAuth, controller.getSkills);

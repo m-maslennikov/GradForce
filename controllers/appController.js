@@ -230,6 +230,49 @@ exports.saveMyEducation = async (req, res) => {
 };
 
 // ===============
+// EDIT MY EDUCATION
+// ===============
+exports.editMyEducation = async (req, res) => {
+  console.log(`Saving profile: ${req.session.user.email}`);
+  try {
+    await User.update({ 'education._id': req.body.educationId }, {
+      $set: {
+        'education.$.level': req.body.level,
+        'education.$.schoolName': req.body.schoolName,
+        'education.$.courseName': req.body.courseName,
+        'education.$.startDate': req.body.educationStartDate,
+        'education.$.endDate': req.body.educationEndDate,
+      },
+    });
+    // await user.save();
+    return res.redirect('/profile');
+  } catch (error) {
+    console.log(error);
+    return res.status(500).redirect('/profile');
+  }
+};
+
+// ===============
+// DELETE MY EDUCATION
+// ===============
+exports.deleteMyEducation = async (req, res) => {
+  console.log(`Saving profile: ${req.session.user.email}`);
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await user.education.pull({ _id: req.body.educationId });
+    await user.save();
+    return res.redirect('/profile');
+  } catch (error) {
+    console.log(error);
+    return res.status(500).redirect('/profile');
+  }
+};
+
+
+// ===============
 // SAVE MY WORK
 // ===============
 exports.saveMyWork = async (req, res) => {
@@ -255,6 +298,51 @@ exports.saveMyWork = async (req, res) => {
     return res.status(500).redirect('/profile');
   }
 };
+
+// ===============
+// EDIT MY WORK
+// ===============
+exports.editMyWork = async (req, res) => {
+  console.log(`Saving profile: ${req.session.user.email}`);
+  try {
+    await User.update({ 'work._id': req.body.workId }, {
+      $set: {
+        'work.$.companyName': req.body.companyName,
+        'work.$.jobRole': req.body.jobRole,
+        'work.$.jobDescription': req.body.jobDescription,
+        'work.$.startDate': req.body.wstartDate,
+        'work.$.endDate': req.body.wendDate,
+        'work.$.country': req.body.country,
+        'work.$.city': req.body.city,
+      },
+    });
+    // await user.save();
+    return res.redirect('/profile');
+  } catch (error) {
+    console.log(error);
+    return res.status(500).redirect('/profile');
+  }
+};
+
+// ===============
+// DELETE MY WORK
+// ===============
+exports.deleteMyWork = async (req, res) => {
+  console.log(`Saving profile: ${req.session.user.email}`);
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await user.work.pull({ _id: req.body.workId });
+    await user.save();
+    return res.redirect('/profile');
+  } catch (error) {
+    console.log(error);
+    return res.status(500).redirect('/profile');
+  }
+};
+
 
 // ==================
 // GENERATE TEST LINK
