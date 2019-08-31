@@ -11,17 +11,6 @@ exports.getRoot = (req, res) => {
 };
 
 
-exports.getStudents = (req, res) => {
-  User.find({ role: 'student' }).then((users) => {
-    res.render('students', {
-      users,
-      pageTitle: 'All students',
-      navbarTitle: 'All students',
-      sidebarPos: 'students',
-    });
-  });
-};
-
 exports.getAddUser = (req, res) => {
   res.render('addUser', {
     pageTitle: 'Add new user',
@@ -42,9 +31,65 @@ exports.getDashboard = async (req, res) => {
     const accountStatus = await codility.getAccountStatus();
     return res.render('dashboard', {
       pageTitle: 'Dashboard',
-      navbarTitle: 'Dashboard',
       sidebarPos: 'dashboard',
       accountStatus,
+    });
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// SHOW ALL STUDENTS PAGE
+exports.getAllStudents = async (req, res) => {
+  try {
+    const students = await User.find({ role: 'student' });
+    res.render('students', {
+      students,
+      pageTitle: 'All students',
+      sidebarPos: 'allStudents',
+    });
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// SHOW INTERVIEWED STUDENTS PAGE
+exports.getInterviewedStudents = async (req, res) => {
+  try {
+    const students = await User.find({ role: 'student', isInterviewed: true });
+    res.render('students', {
+      students,
+      pageTitle: 'Interviewed students',
+      sidebarPos: 'interviewedStudents',
+    });
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// SHOW APPROVED STUDENTS PAGE
+exports.getApprovedStudents = async (req, res) => {
+  try {
+    const students = await User.find({ role: 'student', isApproved: true });
+    res.render('students', {
+      students,
+      pageTitle: 'Approved students',
+      sidebarPos: 'approvedStudents',
     });
   } catch (error) {
     return res.status(500).render('./error/error', {
@@ -69,7 +114,33 @@ exports.getMyProfile = async (req, res) => {
 
     return res.render('myprofile', {
       pageTitle: 'My Profile',
-      navbarTitle: 'My Profile',
+      sidebarPos: 'myprofile',
+      user,
+      skills,
+    });
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// SHOW PROFILE BT ID PAGE
+exports.getProfileById = async (req, res) => {
+  console.log(`Viewing profile ID: ${req.params.id} - ${req.session.user.email}`);
+
+  try {
+    const user = await User.findById(req.params.id);
+    const skills = await Skill.find({});
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return res.render('myprofile', {
+      pageTitle: 'Edit Profile',
       sidebarPos: 'myprofile',
       user,
       skills,
@@ -96,7 +167,6 @@ exports.getSkills = async (req, res) => {
 
     return res.render('skills', {
       pageTitle: 'Skills',
-      navbarTitle: 'Skills',
       sidebarPos: 'skills',
       skills,
     });

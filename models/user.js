@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
-const userSchemaNew = new Schema({
+const userSchema = new Schema({
   email: {
     type: String,
     unique: true,
@@ -20,9 +20,17 @@ const userSchemaNew = new Schema({
   resetTokenExpDate: Date,
   firstName: String,
   lastName: String,
-  phone: Number,
-  isInterviewed: Boolean,
-  isApproved: Boolean,
+  phone: String,
+  isInterviewed: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  isApproved: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   adminNotes: String,
   skills: [
     {
@@ -58,4 +66,4 @@ const userSchemaNew = new Schema({
   ],
 });
 
-module.exports = mongoose.model('User', userSchemaNew);
+module.exports = mongoose.model('User', userSchema);

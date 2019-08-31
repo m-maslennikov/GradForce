@@ -25,15 +25,27 @@
                 <p> My Profile </p>
               </a>
             </li>
-            <li class="nav-item <%= sidebarPos === 'students' ? 'active' : '' %>">
-              <a class="nav-link" href="/students">
-                <i class="material-icons">supervised_user_circle</i>
-                <p> Students </p>
+            <li class="nav-item <%= sidebarPos === 'allStudents' ? 'active' : '' %>">
+              <a class="nav-link" href="/students/all">
+                <i class="material-icons">supervisor_account</i>
+                <p> All Students </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'interviewedStudents' ? 'active' : '' %>">
+              <a class="nav-link" href="/students/interviewed">
+                <i class="material-icons">done</i>
+                <p> Interviewed Students </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'approvedStudents' ? 'active' : '' %>">
+              <a class="nav-link" href="/students/approved">
+                <i class="material-icons">verified_user</i>
+                <p> Approved Students </p>
               </a>
             </li>
             <li class="nav-item <%= sidebarPos === 'skills' ? 'active' : '' %>">
               <a class="nav-link" href="/skills">
-                <i class="material-icons">supervised_user_circle</i>
+                <i class="material-icons">assignment</i>
                 <p> Skills </p>
               </a>
             </li>
