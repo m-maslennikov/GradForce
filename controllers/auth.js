@@ -237,8 +237,10 @@ exports.postRegister = (req, res, next) => {
 // REGISTER WIZARD FORM
 exports.postRegisterWizard = (req, res, next) => {
   const {
-    email, role, password, firstName, lastName, phone, jobb,
+    email, role, password, firstName, lastName, phone,
   } = req.body;
+
+  const {jobb} = req.
 
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -262,7 +264,7 @@ exports.postRegisterWizard = (req, res, next) => {
       firstName,
       lastName,
       phone,
-      jobb,
+      skill: jobb,
     });
     return newUser.save();
   }).then((result) => {
