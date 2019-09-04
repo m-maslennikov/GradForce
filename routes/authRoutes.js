@@ -52,6 +52,29 @@ router.post('/register',
     }),
   ], authController.postRegister);
 
+// REGISTER WIZARD
+router.post('/register_wizard',
+  [
+    check('email').isEmail().withMessage('Please, provide a valid email address')
+      .custom((value, { req }) => {
+        console.log('Returning promise');
+        return User.findOne({ email: value }).then((user) => {
+          if (user) {
+            return Promise.reject('User with this email already registered');
+          }
+        });
+      })
+      .normalizeEmail(),
+    // body('role', 'Must be either student or employer').equals('student' || 'employer').trim(),
+    body('password', 'Password should be greater than 8 characters').isLength({ min: 8 }).trim(),
+    body('confirmPassword').trim().custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Passwords have to match');
+      }
+      return true;
+    }),
+  ], authController.postRegisterWizard);
+
 
 // RESET
 router.post('/reset', authController.postResetRequest);

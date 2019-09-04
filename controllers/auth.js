@@ -5,6 +5,7 @@ const sendgridTransport = require('nodemailer-sendgrid-transport');
 const crypto = require('crypto');
 const { validationResult } = require('express-validator/check');
 const User = require('../models/user');
+const Skill = require('../models/skill');
 
 const transporter = nodemailer.createTransport(sendgridTransport({
   auth: {
@@ -48,19 +49,32 @@ exports.getRegisterPage = (req, res, next) => {
 };
 
 // SHOW REGISTER WIZARD PAGE
-exports.getRegisterWizardPage = (req, res, next) => {
-  res.render('./auth/register_wizard',
-    {
-      path: '/auth/register_wizard',
-      pageTitle: 'Register Wizard',
-      oldInput: {
-        email: '',
-        password: '',
-        confirmPassword: '',
-        role: '',
-      },
-      validationErrors: [],
+exports.getRegisterWizardPage = async (req, res, next) => {
+  try {
+    const skills = await Skill.find({});
+    if (!skills) {
+      throw new Error('Skills not found');
+    }
+    return res.render('./auth/register_wizard',
+      {
+        path: '/auth/register_wizard',
+        pageTitle: 'Register Wizard',
+        oldInput: {
+          email: '',
+          password: '',
+          confirmPassword: '',
+          role: '',
+        },
+        validationErrors: [],
+        skills,
+      });
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
     });
+  }
 };
 
 // SHOW GENERATE RESET PASSWORD PAGE
@@ -205,6 +219,50 @@ exports.postRegister = (req, res, next) => {
       email,
       password: hashedPassword,
       role,
+    });
+    return newUser.save();
+  }).then((result) => {
+    res.redirect('/auth/login');
+    return transporter.sendMail({
+      to: email,
+      from: 'GradForce@gradforce.com',
+      subject: 'GradForce - Registration confirmation',
+      html: '<h1>You have been registered with GradForce</h1>',
+    }).catch((err) => {
+      console.log(err);
+    });
+  });
+};
+
+// REGISTER WIZARD FORM
+exports.postRegisterWizard = (req, res, next) => {
+  const {
+    email, role, password, firstName, lastName, phone, jobb,
+  } = req.body;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render('./auth/register_wizard',
+      {
+        path: '/auth/register_wizard',
+        pageTitle: 'Register',
+        oldInput: {
+          email, role, password, confirmPassword: req.body.confirmPassword,
+        },
+        validationErrors: errors.array(),
+      });
+  }
+
+  bcrypt.hash(password, 12).then((hashedPassword) => {
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      role,
+      firstName,
+      lastName,
+      phone,
+      jobb,
     });
     return newUser.save();
   }).then((result) => {
