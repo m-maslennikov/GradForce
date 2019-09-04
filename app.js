@@ -1,6 +1,3 @@
-// TODO: Configure heroku ENV variables (see .env file)
-
-
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
@@ -11,10 +8,6 @@ const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const bodyParser = require('body-parser');
 const rootDir = require('./utils/path');
-
-const codility = require('./utils/codility');
-const User = require('./models/user');
-const Skill = require('./models/skill');
 
 // MIDDLEWARES
 const getSessionFromDB = require('./middleware/getSessionFromDB');
@@ -37,7 +30,7 @@ const csrfProtection = csrf();
 
 app.set('view engine', 'ejs');
 // app.use(morgan('dev'));
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(rootDir, 'public')));
 app.use(session({
   secret: process.env.SESSION_SECRET, resave: false, saveUninitialized: false, store,
@@ -70,6 +63,3 @@ mongoose.connect(process.env.MONGODB_URL, {
 }).catch((err) => {
   console.log(`Cannot connect to DB: ${err}`);
 });
-
-
-// codility.generateTestLink('m.maslennikov@outlook.com', 'JavaScript');

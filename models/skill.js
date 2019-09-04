@@ -22,6 +22,7 @@ const skillSchema = new Schema({
     required: true,
   },
   public_test_link: String,
+  icon: String,
 });
 
 module.exports = mongoose.model('Skill', skillSchema);

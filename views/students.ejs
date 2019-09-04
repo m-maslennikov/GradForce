@@ -35,7 +35,6 @@
                           <th>Email</th>
                           <th class="disabled-sorting">Skills</th>
                           <th class="disabled-sorting">Interviewed</th>
-                          <th class="disabled-sorting text-right">Actions</th>
                         </tr>
                       </thead>
                       <tfoot>
@@ -44,12 +43,11 @@
                           <th>Email</th>
                           <th>Skills</th>
                           <th>Interviewed</th>
-                          <th class="text-right">Actions</th>
                         </tr>
                       </tfoot>
                       <tbody>
                         <% for (let student of students) { %>
-                        <tr>
+                        <tr onclick="window.location='/profile/<%= student._id %>';">
                           <td><%= student.firstName + ' ' + student.lastName %> <span><i class="material-icons md-16"><%= student.isApproved ? 'verified_user' : '' %></i></span></td>
                           <td><%= student.email %></td>
                           <td>
@@ -58,9 +56,9 @@
                                 <span
                                   class="skill badge 
                                   <%= skill.skillLevel === '' ? 'badge-default' : '' %>
-                                  <%= skill.skillLevel === 'low' ? 'badge-success' : '' %>
-                                  <%= skill.skillLevel === 'med' ? 'badge-warning' : '' %>
-                                  <%= skill.skillLevel === 'hi' ? 'badge-danger' : '' %>
+                                  <%= skill.skillLevel === 'junior' ? 'badge-success' : '' %>
+                                  <%= skill.skillLevel === 'middle' ? 'badge-warning' : '' %>
+                                  <%= skill.skillLevel === 'senior' ? 'badge-danger' : '' %>
                                   ">
                                   <%= skill.name %>
                               </span>
@@ -69,11 +67,7 @@
                               <span class="badge badge-default">N/A</span>
                             <% } %>
                           </td>
-
                           <td><i class="material-icons"><%= student.isInterviewed ? 'done' : '' %></i></td>
-                          <td class="td-actions text-right">
-                            <a href="/profile/<%= student._id %>" class="btn btn-success"><i class="material-icons">edit</i></a>
-                          </td>
                           <!-- <td class="text-right">
                             <a href="/profile/<%= student._id %>" class="btn btn-link btn-default btn-just-icon"><i class="material-icons">assignment_ind</i></a>
                             <a href="#" class="btn btn-link btn-warning btn-just-icon edit"><i class="material-icons">dvr</i></a>

@@ -1,0 +1,263 @@
+<% include ./partials/head %>
+<body class="">
+  <div class="wrapper">
+    <% include ./partials/sidebar %>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <% include ./partials/navbar %>
+      <!-- End Navbar -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Left Col -->
+            <div class="col-xl-9 ml-auto mr-auto">
+              <!-- My Work Experience -->
+              <div class="card">
+                <div class="card-header card-header-icon card-header-rose">
+                  <div class="card-icon">
+                    <i class="material-icons">work</i>
+                  </div>
+                  <h4 class="card-title">My Work Experience -
+                    <small class="category">Edit details</small>
+                    <% if(user.education.length > 0) { %>
+                    <button class="btn btn-rose pull-right" onclick="addWorkForm()">
+                      <i class="material-icons" >add</i>
+                    </button>
+                    <% } %>
+                  </h4>
+                </div>
+                <div class="card-body">
+                <% if(user.work.length > 0) { %>
+                  <div id="workAccordion" role="tablist">
+                  <% for (let work of user.work) { %>
+                    <div class="card-collapse">
+                      <div class="card-header" role="tab" id="heading<%= work._id %>">
+                        <h5 class="mb-0">
+                          <a class="collapsed" data-toggle="collapse" href="#collapse<%= work._id %>" aria-expanded="false" aria-controls="collapse<%= work._id %>">
+                              <%= work.jobRole ? work.jobRole : '' %> - <%= work.companyName ? work.companyName : '' %>
+                            <i class="material-icons">keyboard_arrow_down</i>
+                          </a>
+                        </h5>
+                      </div>
+                      <div id="collapse<%= work._id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= work._id %>" data-parent="#workAccordion">
+                        <div class="card-body">
+                          <form id="delete<%= work._id %>" method="POST" action="/profile/work/delete">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="workId" value="<%= work._id %>">
+                          </form>
+                          <form method="POST" action="/profile/work/edit">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="workId" value="<%= work._id %>">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Job Role</label>
+                                  <input type="text" name="jobRole" class="form-control" value="<%= work.jobRole ? work.jobRole : '' %>">
+                                </div>
+                              </div> 
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                  <div class="form-group">
+                                    <label class="bmd-label-floating">Company Name</label>
+                                    <input type="text" name="companyName" class="form-control" value="<%= work.companyName ? work.companyName : '' %>">
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                  <div class="form-group">
+                                    <label class="bmd-label-floating">Job Description</label>
+                                    <input type="text" name="jobDescription" class="form-control" value="<%= work.jobDescription ? work.jobDescription : '' %>">
+                                  </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Start Date</label>
+                                  <input type="text" name="wstartDate" class="form-control datepicker" value="<%= work.startDate ? work.startDate : '' %>">
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">End Date</label>
+                                  <input type="text" name="wendDate" class="form-control datepicker" value="<%=work.endDate ? work.endDate : '' %>">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">City</label>
+                                  <input type="text" name="city" class="form-control" value="<%= work.city ? work.city : '' %>">
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Country</label>
+                                  <input type="text" name="country" class="form-control" value="<%=work.country ? work.country : '' %>">
+                                </div>
+                              </div>
+                            </div>
+                            <button type="submit" form="delete<%= work._id %>" class="btn btn-danger btn-just-icon pull-right"><i class="material-icons">delete_forever</i></button>
+                            <button type="submit" class="btn btn-success btn-just-icon pull-right"><i class="material-icons">save</i></button>
+                            <div class="clearfix"></div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  <% } %>
+                    <div id="newWorkForm">
+                    </div>
+                  </div>
+                <% } else{ %>
+                  <form method="POST" action="/profile/work">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Job Role</label>
+                          <input type="text" name="jobRole" class="form-control" value="">
+                        </div>
+                      </div> 
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Company Name</label>
+                          <input type="text" name="companyName" class="form-control" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Job Description</label>
+                          <input type="text" name="jobDescription" class="form-control" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Start Date</label>
+                          <input type="text" name="wstartDate" class="form-control datepicker" value="">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">End Date</label>
+                          <input type="text" name="wendDate" class="form-control datepicker" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">City</label>
+                          <input type="text" name="city" class="form-control" value="">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Country</label>
+                          <input type="text" name="country" class="form-control" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-just-icon pull-right"><i class="material-icons">save</i></button>
+                    <div class="clearfix"></div>
+                  </form>
+                <% } %>
+                </div>
+              </div>
+              <!-- End My Work Experience -->
+            </div>
+            <!-- End Left Col -->
+          </div>
+        </div>
+      </div>
+      <% include ./partials/footer %>
+    </div>
+  </div>
+  <% include ./partials/optionsPanel %>
+  <% include ./partials/scripts %>
+  <script>
+    $(document).ready(function() {
+      // initialise Datetimepicker and Sliders
+      md.initFormExtendedDatetimepickers();
+      if ($('.slider').length != 0) {
+        md.initSliders();
+      }
+    });
+  </script>
+  <script>
+    function addWorkForm(){
+    $('#newWorkForm').html('<form method="POST" action="/profile/work">\n'+
+                      '<input type="hidden" name="_csrf" value="<%= csrfToken %>">\n'+
+                      '<div class="row">\n'+
+                        '<div class="col-md-6">\n'+
+                          '<div class="form-group">\n'+
+                            '<label class="bmd-label-floating">Job Role</label>\n'+
+                            '<input type="text" name="jobRole" class="form-control" value="">\n'+
+                          '</div>\n'+
+                        '</div> \n'+
+                      '</div>\n'+
+                      '<div class="row">\n'+
+                          '<div class="col-md-12">\n'+
+                            '<div class="form-group">\n'+
+                              '<label class="bmd-label-floating">Company Name</label>\n'+
+                              '<input type="text" name="companyName" class="form-control" value="">\n'+
+                            '</div>\n'+
+                          '</div>\n'+
+                      '</div>\n'+
+                      '<div class="row">\n'+
+                          '<div class="col-md-12">\n'+
+                            '<div class="form-group">\n'+
+                              '<label class="bmd-label-floating">Job Description</label>\n'+
+                              '<input type="text" name="jobDescription" class="form-control" value="">\n'+
+                            '</div>\n'+
+                          '</div>\n'+
+                      '</div>\n'+
+                      '<div class="row">\n'+
+                        '<div class="col-md-6">\n'+
+                          '<div class="form-group">\n'+
+                            '<label class="bmd-label-floating">Start Date</label>\n'+
+                            '<input type="text" name="wstartDate" class="form-control datepicker" value="">\n'+
+                          '</div>\n'+
+                        '</div>\n'+
+                        '<div class="col-md-6">\n'+
+                          '<div class="form-group">\n'+
+                            '<label class="bmd-label-floating">End Date</label>\n'+
+                            '<input type="text" name="wendDate" class="form-control datepicker" value="">\n'+
+                          '</div>\n'+
+                        '</div>\n'+
+                      '</div>\n'+
+                      '<div class="row">\n'+
+                          '<div class="col-md-6">\n'+
+                            '<div class="form-group">\n'+
+                              '<label class="bmd-label-floating">City</label>\n'+
+                              '<input type="text" name="city" class="form-control" value="">\n'+
+                            '</div>\n'+
+                          '</div>\n'+
+                          '<div class="col-md-6">\n'+
+                            '<div class="form-group">\n'+
+                              '<label class="bmd-label-floating">Country</label>\n'+
+                              '<input type="text" name="country" class="form-control" value="">\n'+
+                            '</div>\n'+
+                          '</div>\n'+
+                        '</div>\n'+
+                      '<button type="submit" class="btn btn-rose pull-right">Add</button>\n'+
+                      '<div class="clearfix"></div>\n'+
+                    '</form>\n'
+      );
+      md.initFormExtendedDatetimepickers();
+      if ($('.slider').length != 0) {
+        md.initSliders();
+      }
+    }
+  </script>
+</body>
+
+</html>

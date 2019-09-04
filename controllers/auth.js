@@ -158,7 +158,15 @@ exports.postLogin = (req, res, next) => {
           if (err) {
             console.log(err);
           }
-          return res.redirect('/profile');
+          if (user.role === 'admin') {
+            return res.redirect('/dashboard');
+          }
+          if (user.role === 'student') {
+            return res.redirect('/profile');
+          }
+          if (user.role === 'employer') {
+            return res.redirect('/profile');
+          }
         });
       }
       return res.status(422).render('./auth/login',

@@ -1,0 +1,242 @@
+<% include ./partials/head %>
+<body class="">
+  <div class="wrapper">
+    <% include ./partials/sidebar %>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <% include ./partials/navbar %>
+      <!-- End Navbar -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Right Col -->
+            <div class="col-xl-8">
+              <!-- My Tests -->
+              <div class="card">
+                <div class="card-header card-header-primary card-header-icon">
+                  <div class="card-icon">
+                    <i class="material-icons">code</i>
+                  </div>
+                  <h4 class="card-title">Skills -
+                    <small class="category"><%= user.firstName %> <%= user.lastName %></small>
+                  </h4>
+                </div>
+                <div class="card-body">
+                  <div class="toolbar">
+                    <!-- Here you can write extra buttons/actions for the toolbar -->
+                  </div>
+                  <% if (!user.skills.length > 0) { %>
+                  <h4>Student have not selected any skills yet</h4>
+                  <% } else { %>
+                  <!-- Pre-create forms -->
+                  <% for (let skill of user.skills) { %>
+                  <% if (skill.test_link === null) { %>
+                    <form action="/test/create" method="post" id="testCreateForm<%= skill.skillId %>">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="userId" value="<%= user._id %>">
+                      <input type="hidden" name="email" value="<%= user.email %>">
+                      <input type="hidden" name="userSkillId" value="<%= skill._id %>">
+                      <input type="hidden" name="globalSkillId" value="<%= skill.skillId %>">
+                    </form>
+                  <% } %>
+                  <% if (skill.cancel_url !== null) { %>
+                    <form action="/test/cancel" method="post" id="testCancelForm<%= skill.skillId %>">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="userId" value="<%= user._id %>">
+                      <input type="hidden" name="userSkillId" value="<%= skill._id %>">
+                      <input type="hidden" name="cancelUrl" value="<%= skill.cancel_url %>">
+                    </form>
+                  <% } %>
+                  <% if (skill.session_url !== null) { %>
+                    <form action="/test/report" method="post" id="testReportForm<%= skill.skillId %>">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="sessionUrl" value="<%= skill.session_url %>">
+                    </form>
+                    <form action="/test/refresh" method="post" id="testRefreshForm<%= skill.skillId %>">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <input type="hidden" name="sessionUrl" value="<%= skill.session_url %>">
+                      <input type="hidden" name="userId" value="<%= user._id %>">
+                      <input type="hidden" name="userSkillId" value="<%= skill._id %>">
+                    </form>
+                  <% } %>
+                  <% } %>
+                  <div class="material-datatables">
+                    <table id="skillsTable" class="table table-striped table-no-bordered table-hover" cellspacing="0" width="100%" style="width:100%">
+                      <thead>
+                        <tr>
+                          <th>Skill</th>
+                          <th>Level</th>
+                          <th>Test score</th>
+                          <th class="disabled-sorting text-right">Actions</th>
+                        </tr>
+                      </thead>
+                      <tfoot>
+                        <tr>
+                          <th>Skill</th>
+                          <th>Level</th>
+                          <th>Test score</th>
+                          <th class="text-right">Actions</th>
+                        </tr>
+                      </tfoot>
+                      <tbody>
+                        <% for (let skill of user.skills) { %>
+                        <tr>
+                          <td><%= skill.name %></td>
+                          <td>
+                            <span
+                              class="skill badge 
+                              <%= skill.skillLevel === '' ? 'badge-default' : '' %>
+                              <%= skill.skillLevel === 'junior' ? 'badge-success' : '' %>
+                              <%= skill.skillLevel === 'middle' ? 'badge-warning' : '' %>
+                              <%= skill.skillLevel === 'senior' ? 'badge-danger' : '' %>
+                              ">
+                              <%= skill.skillLevel %>
+                            </span>
+                          </td>
+                          <td>
+                            <% if (skill.result === null) { %>
+                              N/A
+                            <% } else { %>
+                              <%= skill.result %> / <%= skill.max_result %>
+                            <% } %>
+                          </td>
+                          <td class="text-right">
+                            <% if (skill.test_link === null) { %>
+                              <button type="submit" form="testCreateForm<%= skill.skillId %>" class="btn btn-primary btn-sm">Create test</button>
+                            <% } %>
+                            <% if (skill.cancel_url !== null) { %>
+                              <button type="submit" form="testCancelForm<%= skill.skillId %>" class="btn btn-danger btn-sm">Cancel test</button>
+                            <% } %>
+                            <% if (skill.session_url !== null) { %>
+                              <button type="submit" form="testReportForm<%= skill.skillId %>" class="btn btn-primary btn-sm">View report</button>
+                              <button type="submit" form="testRefreshForm<%= skill.skillId %>" class="btn btn-primary btn-sm">Refresh</button>
+                            <% } %>
+                            <% if (skill.result !== null) { %>
+                            <form action="/skill/verify" method="post">
+                              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                              <input type="hidden" name="userSkillId" value="<%= skill._id %>">
+                              <input type="hidden" name="userId" value="<%= user._id %>">
+                              <button type="submit" name="skillLevel" value="junior" class="btn btn-success btn-just-icon btn-sm" data-toggle="tooltip" data-placement="top" title="Set level: Junior"><i class="material-icons md-16">star_border</i></button>
+                              <button type="submit" name="skillLevel" value="middle" class="btn btn-warning btn-just-icon btn-sm" data-toggle="tooltip" data-placement="top" title="Set level: Middle"><i class="material-icons md-16">star_half</i></button>
+                              <button type="submit" name="skillLevel" value="senior" class="btn btn-danger btn-just-icon btn-sm" data-toggle="tooltip" data-placement="top" title="Set level: Senior"><i class="material-icons md-16">star</i></button>
+                            </form>
+                            <% } %>
+                          </td>
+                        </tr>
+                        <% } %>
+                      </tbody>
+                    </table>
+                  </div>
+                  <% } %>
+                </div>
+              </div>
+              <!-- End My Tests -->
+            </div>
+            <!-- End Right Col -->
+            <!-- Left Col -->
+            <div class="col-xl-4">
+              <!-- My Profile -->
+              <div class="card">
+                <div class="card-header card-header-icon card-header-rose">
+                  <div class="card-icon">
+                    <i class="material-icons">person</i>
+                  </div>
+                  <h4 class="card-title">Personal Info -
+                    <small class="category">Edit details</small>
+                  </h4>
+                </div>
+                <div class="card-body">
+                  <form method="POST" action="/profile/save/<%= user._id %>">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">ID</label>
+                          <input type="text" class="form-control" disabled value="<%= user._id ? user._id : '' %>">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Email address</label>
+                          <input type="email" class="form-control" disabled value="<%= user.email %>">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Fist Name</label>
+                          <input type="text" name="firstName" class="form-control" value="<%= user.firstName ? user.firstName : '' %>">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Last Name</label>
+                          <input type="text" name="lastName" class="form-control" value="<%=user.lastName ? user.lastName : '' %>">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Phone</label>
+                          <input type="text" name="phone" class="form-control" value="<%= user.phone ? user.phone : '' %>">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <div class="togglebutton">
+                            <label>
+                              <input type="checkbox" name="isInterviewed" value="true" <%= user.isInterviewed ? 'checked' : '' %>>
+                              <span class="toggle"></span>
+                              Interviewed
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <div class="togglebutton">
+                            <label>
+                              <input type="checkbox" name="isApproved" value="true" <%= user.isApproved ? 'checked' : '' %>>
+                              <span class="toggle"></span>
+                              Approved
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="clearfix">
+                      <button type="submit" class="btn btn-success btn-just-icon pull-right"><i class="material-icons">save</i></button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+              <!-- End My Profile -->
+            </div>
+            <!-- End Left Col -->
+          </div>
+        </div>
+      </div>
+      <% include ./partials/footer %>
+    </div>
+  </div>
+  <% include ./partials/optionsPanel %>
+  <% include ./partials/scripts %>
+  <script>
+    $(document).ready(function() {
+      // initialise Datetimepicker and Sliders
+      md.initFormExtendedDatetimepickers();
+      if ($('.slider').length != 0) {
+        md.initSliders();
+      }
+    });
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  </script>
+</body>
+
+</html>

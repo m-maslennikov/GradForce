@@ -35,11 +35,17 @@ const userSchema = new Schema({
   skills: [
     {
       skillId: { type: Schema.Types.ObjectId, ref: 'Skill' },
-      name: String,
+      name: { type: String, required: true },
       skillLevel: { type: String, default: '' },
-      test_link: String,
-      isVerified: Boolean,
-      isTested: Boolean,
+      test_link: { type: String, default: null },
+      session_url: { type: String, default: null },
+      report_link: { type: String, default: null },
+      pdf_report_url: { type: String, default: null },
+      cancel_url: { type: String, default: null },
+      isVerified: { type: Boolean, default: false },
+      isTested: { type: Boolean, default: false },
+      result: { type: Number, default: null },
+      max_result: { type: Number, default: null },
     },
   ],
   education: [

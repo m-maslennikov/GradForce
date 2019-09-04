@@ -1,0 +1,221 @@
+<% include ./partials/head %>
+<body class="">
+  <div class="wrapper">
+    <% include ./partials/sidebar %>
+    <div class="main-panel">
+      <!-- Navbar -->
+      <% include ./partials/navbar %>
+      <!-- End Navbar -->
+      <div class="content">
+        <div class="container-fluid">
+          <div class="row">
+            <!-- Left Col -->
+            <div class="col-xl-9 ml-auto mr-auto">
+              <!-- My Education -->
+              <div class="card">
+                <div class="card-header card-header-icon card-header-rose">
+                  <div class="card-icon">
+                    <i class="material-icons">school</i>
+                  </div>
+                  <h4 class="card-title">My Education -
+                    <small class="category">Edit details</small>
+                    <% if(user.education.length > 0) { %>
+                    <button class="btn btn-rose pull-right" onclick="addEducForm()">
+                      <i class="material-icons">add</i>
+                    </button>
+                    <% } %>
+                  </h4>
+                </div>
+                <div class="card-body">
+                <% if(user.education.length > 0) { %>
+                  <div id="educationAccordion" role="tablist">
+                  <% for (let education of user.education) { %>
+                    <div class="card-collapse">
+                      <div class="card-header" role="tab" id="heading<%= education._id %>">
+                        <h5 class="mb-0">
+                          <a class="collapsed" data-toggle="collapse" href="#collapse<%= education._id %>" aria-expanded="false" aria-controls="collapse<%= education._id %>">
+                            <%= education.schoolName ? education.schoolName : '' %>
+                            <i class="material-icons">keyboard_arrow_down</i>
+                          </a>
+                        </h5>
+                      </div>
+                      <div id="collapse<%= education._id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= education._id %>" data-parent="#educationAccordion">
+                        <div class="card-body">
+                          <form id="delete<%= education._id %>" method="POST" action="/profile/education/delete">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="educationId" value="<%= education._id %>">
+                          </form>
+                          <form method="POST" action="/profile/education/edit">
+                            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                            <input type="hidden" name="educationId" value="<%= education._id %>">
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Level</label>
+                                  <input type="text" name="level" class="form-control" value="<%= education.level ? education.level : '' %>">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">School Name</label>
+                                  <input type="text" name="schoolName" class="form-control" value="<%= education.schoolName ? education.schoolName : '' %>">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-12">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Course</label>
+                                  <input type="text" name="courseName" class="form-control" value="<%= education.courseName ? education.courseName : '' %>">
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">Start Date</label>
+                                  <input type="text" name="educationStartDate" class="form-control datepicker" value="<%= education.startDate ? education.startDate : '' %>">
+                                </div>
+                              </div>
+                              <div class="col-md-6">
+                                <div class="form-group">
+                                  <label class="bmd-label-floating">End Date</label>
+                                  <input type="text" name="educationEndDate" class="form-control datepicker" value="<%=education.endDate ? education.endDate : '' %>">
+                                </div>
+                              </div>
+                            </div>
+                            <button type="submit" form="delete<%= education._id %>" class="btn btn-danger btn-just-icon pull-right"><i class="material-icons">delete_forever</i></button>
+                            <button type="submit" class="btn btn-success btn-just-icon pull-right"><i class="material-icons">save</i></button>
+                            <div class="clearfix"></div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  <% } %>
+                    <div id="newEducationForm">
+                    </div>
+                  </div>
+                <% } else{ %>
+                  <form method="POST" action="/profile/education">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Level</label>
+                          <input type="text" name="level" class="form-control" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">School Name</label>
+                          <input type="text" name="schoolName" class="form-control" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Course</label>
+                          <input type="text" name="courseName" class="form-control" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">Start Date</label>
+                          <input type="text" name="educationStartDate" class="form-control datepicker" value="">
+                        </div>
+                      </div>
+                      <div class="col-md-6">
+                        <div class="form-group">
+                          <label class="bmd-label-floating">End Date</label>
+                          <input type="text" name="educationEndDate" class="form-control datepicker" value="">
+                        </div>
+                      </div>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-just-icon pull-right"><i class="material-icons">save</i></button>
+                    <div class="clearfix"></div>
+                  </form> 
+                <% } %>
+                </div>
+              </div>
+              <!-- End My Education -->
+            </div>
+            <!-- End Left Col -->
+          </div>
+        </div>
+      </div>
+      <% include ./partials/footer %>
+    </div>
+  </div>
+  <% include ./partials/optionsPanel %>
+  <% include ./partials/scripts %>
+  <script>
+    $(document).ready(function() {
+      // initialise Datetimepicker and Sliders
+      md.initFormExtendedDatetimepickers();
+      if ($('.slider').length != 0) {
+        md.initSliders();
+      }
+    });
+  </script>
+  <script>
+    function addEducForm(){
+    $('#newEducationForm').html('<form method="POST" action="/profile/education">\n' +
+                          '<input type="hidden" name="_csrf" value="<%= csrfToken %>">\n' +
+                          '<div class="row">\n' +
+                            '<div class="col-md-6">\n' +
+                              '<div class="form-group">\n' +
+                                '<label class="bmd-label-floating">Level</label>\n' +
+                                '<input type="text" name="level" class="form-control" value="">\n' +
+                              '</div>\n' +
+                            '</div>\n' +
+                          '</div>\n' +
+                          '<div class="row">\n' +
+                              '<div class="col-md-12">\n' +
+                                '<div class="form-group">\n' +
+                                  '<label class="bmd-label-floating">School Name</label>\n' +
+                                  '<input type="text" name="schoolName" class="form-control" value="">\n' +
+                                '</div>\n' +
+                              '</div>\n' +
+                          '</div>\n' +
+                          '<div class="row">\n' +
+                              '<div class="col-md-12">\n' +
+                                '<div class="form-group">\n' +
+                                  '<label class="bmd-label-floating">Course</label>\n' +
+                                  '<input type="text" name="courseName" class="form-control" value="">\n' +
+                                '</div>\n' +
+                              '</div>\n' +
+                          '</div>\n' +
+                          '<div class="row">\n' +
+                            '<div class="col-md-6">\n' +
+                              '<div class="form-group">\n' +
+                                '<label class="bmd-label-floating">Start Date</label>\n' +
+                                '<input type="text" name="educationStartDate" class="form-control datepicker" value="">\n' +
+                              '</div>\n' +
+                            '</div>\n' +
+                            '<div class="col-md-6">\n' +
+                              '<div class="form-group">\n' +
+                                '<label class="bmd-label-floating">End Date</label>\n' +
+                                '<input type="text" name="educationEndDate" class="form-control datepicker" value="">\n' +
+                              '</div>\n' +
+                            '</div>\n' +
+                          '</div>\n' +
+                          '<button type="submit" class="btn btn-rose pull-right">Add</button>\n' +
+                          '<div class="clearfix"></div>\n' +
+                        '</form>\n' 
+      );
+      md.initFormExtendedDatetimepickers();
+      if ($('.slider').length != 0) {
+        md.initSliders();
+      }
+    }
+  </script>
+</body>
+
+</html>

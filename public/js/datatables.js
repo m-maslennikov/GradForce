@@ -18,7 +18,7 @@ $(document).ready(() => {
       searchPlaceholder: 'Search',
     },
     aoColumnDefs: [
-      { bSortable: false, aTargets: [2, 3, 4] },
+      { bSortable: false, aTargets: [2, 3] },
     ],
   });
 });

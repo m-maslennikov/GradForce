@@ -4,24 +4,39 @@ const User = require('../models/user');
 
 const auth = `Bearer ${process.env.CODILITY_API_KEY}`;
 
-const get = (apiPath, callback) => {
-  const rootURL = 'https://codility.com/api/';
+const get = async (uri) => {
   const options = {
-    url: rootURL + apiPath,
+    uri,
     json: true,
     method: 'GET',
     headers: {
       Authorization: auth,
     },
   };
+  try {
+    const result = await request(options);
+    return result;
+  } catch (error) {
+    throw new Error(`Something wrong with Codility Get:\n ${error}`);
+  }
+};
 
-  request(options, (error, { body }) => {
-    if (error) {
-      callback('Unable to connect to codility', undefined);
-    } else {
-      callback(undefined, body);
-    }
-  });
+
+const post = async (uri) => {
+  const options = {
+    uri,
+    json: true,
+    method: 'POST',
+    headers: {
+      Authorization: auth,
+    },
+  };
+  try {
+    const result = await request(options);
+    return result;
+  } catch (error) {
+    throw new Error(`Something wrong with Codility Post:\n ${error}`);
+  }
 };
 
 const syncSkills = async () => {
@@ -59,11 +74,9 @@ const syncSkills = async () => {
 
 const generateTestLink = async (email, skillId) => {
   try {
-    // console.log(`Email is: ${email}`);
     const user = await User.findOne({ email });
     const skill = await Skill.findById(skillId);
-    // console.log(`Invite URL is: ${skill.invite_url}`);
-    const options = {
+    const generateTestOptions = {
       method: 'POST',
       uri: skill.invite_url,
       json: true,
@@ -82,17 +95,20 @@ const generateTestLink = async (email, skillId) => {
         rpt_emails: ['maxmas@7wolf.org'],
       },
     };
+    const generateTestResult = await request(generateTestOptions);
 
-    // console.log(`Options for ${options.body.candidates[0].id} are: \n`);
-    const result = await request(options);
-    // console.log(result);
-    await user.skills.push({
-      skillId: skill._id,
-      name: skill.name,
-      test_link: result.candidates[0].test_link,
-      session_url: result.candidates[0].session_url,
-    });
-    await user.save();
+    const getSessionOptions = {
+      method: 'GET',
+      uri: generateTestResult.candidates[0].session_url,
+      json: true,
+      headers: {
+        'User-Agent': 'Request-Promise',
+        Authorization: auth,
+      },
+    };
+    const getSessionResult = await request(getSessionOptions);
+
+    return getSessionResult;
   } catch (error) {
     throw new Error(`Something wrong with Codility invitation:\n ${error}`);
   }
@@ -116,7 +132,27 @@ const getAccountStatus = async () => {
   }
 };
 
+const getTestsCount = async () => {
+  const options = {
+    uri: 'https://codility.com/api/tests/',
+    json: true,
+    headers: {
+      'User-Agent': 'Request-Promise',
+      Authorization: auth,
+    },
+  };
+
+  try {
+    const result = await request(options);
+    return result;
+  } catch (error) {
+    throw new Error(`Something wrong with Codility account status:\n ${error}`);
+  }
+};
+
 module.exports.get = get;
+module.exports.post = post;
 module.exports.getAccountStatus = getAccountStatus;
+module.exports.getTestsCount = getTestsCount;
 module.exports.syncSkills = syncSkills;
 module.exports.generateTestLink = generateTestLink;

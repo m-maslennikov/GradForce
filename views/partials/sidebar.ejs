@@ -13,16 +13,31 @@
         </div>
         <div class="sidebar-wrapper">
           <ul class="nav">
-            <li class="nav-item <%= sidebarPos === 'dashboard' ? 'active' : '' %>">
-              <a class="nav-link" href="/dashboard">
-                <i class="material-icons">dashboard</i>
-                <p> Dashboard </p>
-              </a>
-            </li>
+            <% if (currentUser.role === 'student') { %>
             <li class="nav-item <%= sidebarPos === 'myprofile' ? 'active' : '' %>">
               <a class="nav-link" href="/profile">
                 <i class="material-icons">person</i>
                 <p> My Profile </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'myeducation' ? 'active' : '' %>">
+              <a class="nav-link" href="/education">
+                <i class="material-icons">school</i>
+                <p> My Education </p>
+              </a>
+            </li>
+            <li class="nav-item <%= sidebarPos === 'mywork' ? 'active' : '' %>">
+              <a class="nav-link" href="/work">
+                <i class="material-icons">work</i>
+                <p> My Work </p>
+              </a>
+            </li>
+            <% } %>
+            <% if (currentUser.role === 'admin') { %>
+            <li class="nav-item <%= sidebarPos === 'dashboard' ? 'active' : '' %>">
+              <a class="nav-link" href="/dashboard">
+                <i class="material-icons">dashboard</i>
+                <p> Dashboard </p>
               </a>
             </li>
             <li class="nav-item <%= sidebarPos === 'allStudents' ? 'active' : '' %>">
@@ -61,6 +76,7 @@
                 <p> Calendar </p>
               </a>
             </li>
+            <% } %>
           </ul>
         </div>
       </div>

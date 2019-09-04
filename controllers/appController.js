@@ -11,13 +11,6 @@ exports.getRoot = (req, res) => {
 };
 
 
-exports.getAddUser = (req, res) => {
-  res.render('addUser', {
-    pageTitle: 'Add new user',
-  });
-};
-
-
 // ==========
 // SHOW PAGES
 // ==========
@@ -29,10 +22,12 @@ exports.getDashboard = async (req, res) => {
 
   try {
     const accountStatus = await codility.getAccountStatus();
+    const testsCount = await codility.getTestsCount();
     return res.render('dashboard', {
       pageTitle: 'Dashboard',
       sidebarPos: 'dashboard',
       accountStatus,
+      testsCount,
     });
   } catch (error) {
     return res.status(500).render('./error/error', {
@@ -128,6 +123,56 @@ exports.getMyProfile = async (req, res) => {
 };
 
 
+// SHOW MY EDUCATION PAGE
+exports.getMyEducation = async (req, res) => {
+  console.log(`Viewing education: ${req.session.user.email}`);
+
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return res.render('myeducation', {
+      pageTitle: 'My Education',
+      sidebarPos: 'myeducation',
+      user,
+    });
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// SHOW MY WORK PAGE
+exports.getMyWork = async (req, res) => {
+  console.log(`Viewing work: ${req.session.user.email}`);
+
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return res.render('mywork', {
+      pageTitle: 'My Work',
+      sidebarPos: 'mywork',
+      user,
+    });
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
 // SHOW PROFILE BT ID PAGE
 exports.getProfileById = async (req, res) => {
   console.log(`Viewing profile ID: ${req.params.id} - ${req.session.user.email}`);
@@ -139,8 +184,8 @@ exports.getProfileById = async (req, res) => {
       throw new Error('User not found');
     }
 
-    return res.render('myprofile', {
-      pageTitle: 'Edit Profile',
+    return res.render('studentProfile', {
+      pageTitle: 'Student Profile',
       sidebarPos: 'myprofile',
       user,
       skills,
@@ -204,11 +249,39 @@ exports.saveMyProfile = async (req, res) => {
   }
 };
 
-// ===============
+
+// ==================
+// SAVE PROFILE BY ID
+// ==================
+exports.saveProfileById = async (req, res) => {
+  console.log(`Saving profile: ${req.params.id}`);
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.phone = req.body.phone;
+    req.body.isInterviewed === 'true' ? user.isInterviewed = true : user.isInterviewed = false;
+    req.body.isApproved === 'true' ? user.isApproved = true : user.isApproved = false;
+    await user.save();
+    return res.redirect(`/profile/${req.params.id}`);
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// =================
 // SAVE MY EDUCATION
-// ===============
+// =================
 exports.saveMyEducation = async (req, res) => {
-  console.log(`Saving profile: ${req.session.user.email}`);
+  console.log(`Saving education: ${req.session.user.email}`);
   try {
     const user = await User.findById(req.session.user._id);
     if (!user) {
@@ -222,18 +295,18 @@ exports.saveMyEducation = async (req, res) => {
       endDate: req.body.educationEndDate,
     });
     await user.save();
-    return res.redirect('/profile');
+    return res.redirect('/education');
   } catch (error) {
     console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).redirect('/education');
   }
 };
 
-// ===============
+// =================
 // EDIT MY EDUCATION
-// ===============
+// =================
 exports.editMyEducation = async (req, res) => {
-  console.log(`Saving profile: ${req.session.user.email}`);
+  console.log(`Saving education: ${req.session.user.email}`);
   try {
     await User.update({ 'education._id': req.body.educationId }, {
       $set: {
@@ -245,18 +318,18 @@ exports.editMyEducation = async (req, res) => {
       },
     });
     // await user.save();
-    return res.redirect('/profile');
+    return res.redirect('/education');
   } catch (error) {
     console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).redirect('/education');
   }
 };
 
-// ===============
+// ===================
 // DELETE MY EDUCATION
-// ===============
+// ===================
 exports.deleteMyEducation = async (req, res) => {
-  console.log(`Saving profile: ${req.session.user.email}`);
+  console.log(`Saving education: ${req.session.user.email}`);
   try {
     const user = await User.findById(req.session.user._id);
     if (!user) {
@@ -264,17 +337,17 @@ exports.deleteMyEducation = async (req, res) => {
     }
     await user.education.pull({ _id: req.body.educationId });
     await user.save();
-    return res.redirect('/profile');
+    return res.redirect('/education');
   } catch (error) {
     console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).redirect('/education');
   }
 };
 
 
-// ===============
+// ============
 // SAVE MY WORK
-// ===============
+// ============
 exports.saveMyWork = async (req, res) => {
   console.log(`Saving profile: ${req.session.user.email}`);
   try {
@@ -292,18 +365,18 @@ exports.saveMyWork = async (req, res) => {
       city: req.body.city,
     });
     await user.save();
-    return res.redirect('/profile');
+    return res.redirect('/work');
   } catch (error) {
     console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).redirect('/work');
   }
 };
 
-// ===============
+// ============
 // EDIT MY WORK
-// ===============
+// ============
 exports.editMyWork = async (req, res) => {
-  console.log(`Saving profile: ${req.session.user.email}`);
+  console.log(`Saving work: ${req.session.user.email}`);
   try {
     await User.update({ 'work._id': req.body.workId }, {
       $set: {
@@ -317,24 +390,47 @@ exports.editMyWork = async (req, res) => {
       },
     });
     // await user.save();
-    return res.redirect('/profile');
+    return res.redirect('/work');
   } catch (error) {
     console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).redirect('/work');
   }
 };
 
-// ===============
+// ==============
 // DELETE MY WORK
-// ===============
+// ==============
 exports.deleteMyWork = async (req, res) => {
-  console.log(`Saving profile: ${req.session.user.email}`);
+  console.log(`Saving work: ${req.session.user.email}`);
   try {
     const user = await User.findById(req.session.user._id);
     if (!user) {
       throw new Error('User not found');
     }
     await user.work.pull({ _id: req.body.workId });
+    await user.save();
+    return res.redirect('/work');
+  } catch (error) {
+    console.log(error);
+    return res.status(500).redirect('/work');
+  }
+};
+
+
+// =============
+// SAVE MY SKILL
+// =============
+exports.saveMySkill = async (req, res) => {
+  console.log(`Saving skill: ${req.session.user.email}`);
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await user.skills.push({
+      name: req.body.skillName,
+      skillId: req.body.skillId,
+    });
     await user.save();
     return res.redirect('/profile');
   } catch (error) {
@@ -344,15 +440,135 @@ exports.deleteMyWork = async (req, res) => {
 };
 
 
+// ============
+// VERIFY SKILL
+// ============
+exports.verifySkill = async (req, res) => {
+  const { userId, userSkillId, skillLevel } = req.body;
+  console.log('Approving skill');
+  try {
+    await User.update({ 'skills._id': userSkillId }, {
+      $set: {
+        'skills.$.skillLevel': skillLevel,
+        'skills.$.isVerified': true,
+      },
+    });
+    return res.redirect(`/profile/${userId}`);
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
 // ==================
 // GENERATE TEST LINK
 // ==================
 exports.generateTestLink = async (req, res) => {
-  const skillId = req.body.skill_id;
-  console.log(`Generating a ${skillId} test link for: ${req.session.user.email}`);
+  const {
+    email, userSkillId, globalSkillId, userId,
+  } = req.body;
+  console.log(`Generating a ${globalSkillId} test link for: ${email}`);
   try {
-    await codility.generateTestLink(req.session.user.email, skillId);
-    return res.redirect('/profile');
+    const result = await codility.generateTestLink(email, globalSkillId);
+    await User.update({ 'skills._id': userSkillId }, {
+      $set: {
+        'skills.$.test_link': result.test_link,
+        'skills.$.report_link': result.report_link,
+        'skills.$.pdf_report_url': result.pdf_report_url,
+        'skills.$.session_url': result.url,
+        'skills.$.cancel_url': result.cancel_url,
+        'skills.$.max_result': result.evaluation.max_result,
+      },
+    });
+    return res.redirect(`/profile/${userId}`);
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// ==================
+// REFRESH SKILL INFO
+// ==================
+exports.refreshSkillInfo = async (req, res) => {
+  const {
+    userSkillId, sessionUrl, userId,
+  } = req.body;
+  console.log('Refreshing skill info');
+  try {
+    const result = await codility.get(sessionUrl);
+    const updateResult = await User.update({ 'skills._id': userSkillId }, {
+      $set: {
+        'skills.$.test_link': result.test_link,
+        'skills.$.report_link': result.report_link,
+        'skills.$.pdf_report_url': result.pdf_report_url,
+        'skills.$.session_url': result.url,
+        'skills.$.cancel_url': result.cancel_url,
+        'skills.$.result': result.evaluation.result,
+        'skills.$.max_result': result.evaluation.max_result,
+      },
+    });
+    return res.redirect(`/profile/${userId}`);
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// ===========
+// CANCEL TEST
+// ===========
+exports.cancelTest = async (req, res) => {
+  const {
+    cancelUrl, userSkillId, userId,
+  } = req.body;
+  console.log('Cancelling test link');
+  try {
+    const result = await codility.post(cancelUrl);
+    console.log(result);
+    const updateResult = await User.update({ 'skills._id': userSkillId }, {
+      $set: {
+        'skills.$.test_link': null,
+        'skills.$.report_link': null,
+        'skills.$.pdf_report_url': null,
+        'skills.$.session_url': null,
+        'skills.$.cancel_url': null,
+        'skills.$.result': null,
+        'skills.$.max_result': null,
+      },
+    });
+    return res.redirect(`/profile/${userId}`);
+  } catch (error) {
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
+  }
+};
+
+
+// ===================
+// GET EMBEDDED REPORT
+// ===================
+exports.getEmbeddedReport = async (req, res) => {
+  const { sessionUrl } = req.body;
+  console.log('Retrieving report');
+  try {
+    const result = await codility.post(`${sessionUrl}embed_report/`);
+    return res.status(301).redirect(result.url);
   } catch (error) {
     return res.status(500).render('./error/error', {
       pageTitle: '500',
