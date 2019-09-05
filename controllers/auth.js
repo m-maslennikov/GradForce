@@ -51,8 +51,8 @@ exports.getRegisterPage = (req, res, next) => {
 // SHOW REGISTER WIZARD PAGE
 exports.getRegisterWizardPage = async (req, res, next) => {
   try {
-    const skills = await Skill.find({});
-    if (!skills) {
+    const skillsFromDb = await Skill.find({});
+    if (!skillsFromDb) {
       throw new Error('Skills not found');
     }
     return res.render('./auth/register_wizard',
@@ -66,7 +66,7 @@ exports.getRegisterWizardPage = async (req, res, next) => {
           role: '',
         },
         validationErrors: [],
-        skills,
+        skillsFromDb,
       });
   } catch (error) {
     return res.status(500).render('./error/error', {
@@ -235,28 +235,39 @@ exports.postRegister = (req, res, next) => {
 };
 
 // REGISTER WIZARD FORM
-exports.postRegisterWizard = (req, res, next) => {
-  const {
-    email, role, password, firstName, lastName, phone,
-  } = req.body;
+exports.postRegisterWizard = async (req, res, next) => {
+  try {
+    const {
+      email, password, firstName, lastName, phone, skills, role,
+    } = req.body;
+    // const role = 'student';
 
-  const {jobb} = req.
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors.array());
+      const skillsFromDb = await Skill.find({});
+      return res.status(422).render('./auth/register_wizard',
+        {
+          path: '/auth/register_wizard',
+          pageTitle: 'Register',
+          skillsFromDb,
+          oldInput: {
+            email, role, password, confirmPassword: req.body.confirmPassword, firstName, lastName, phone,
+          },
+          validationErrors: errors.array(),
+        });
+    }
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    console.log(errors.array());
-    return res.status(422).render('./auth/register_wizard',
-      {
-        path: '/auth/register_wizard',
-        pageTitle: 'Register',
-        oldInput: {
-          email, role, password, confirmPassword: req.body.confirmPassword,
-        },
-        validationErrors: errors.array(),
-      });
-  }
 
-  bcrypt.hash(password, 12).then((hashedPassword) => {
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const userSkills = [];
+    for (const skill of skills) {
+      result = skill.split('-');
+      name = result[0];
+      skillId = result[1];
+      userSkills.push({ skillId, name });
+    }
+    console.log(userSkills);
     const newUser = new User({
       email,
       password: hashedPassword,
@@ -264,20 +275,19 @@ exports.postRegisterWizard = (req, res, next) => {
       firstName,
       lastName,
       phone,
-      skill: jobb,
+      skills: userSkills,
     });
-    return newUser.save();
-  }).then((result) => {
-    res.redirect('/auth/login');
-    return transporter.sendMail({
+    await newUser.save();
+    await transporter.sendMail({
       to: email,
       from: 'GradForce@gradforce.com',
       subject: 'GradForce - Registration confirmation',
       html: '<h1>You have been registered with GradForce</h1>',
-    }).catch((err) => {
-      console.log(err);
     });
-  });
+    res.redirect('/auth/login');
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 
@@ -296,6 +306,7 @@ exports.postResetRequest = (req, res, next) => {
       }
       user.resetToken = token;
       user.resetTokenExpDate = Date.now() + 3600000;
+
       return user.save();
     }).then((result) => {
       res.redirect('/');

@@ -44,8 +44,28 @@
                   <div class="card-body">
                     <div class="tab-content">
                       <!-- About tag -->
+
+                      <% let err; %>
                       <div class="tab-pane active" id="about">
                         <h5 class="info-text"> Please, fill your details</h5>
+                        <div class="d-flex justify-content-center">
+                          <div class="form-check form-check-radio form-check-inline">
+                            <label class="form-check-label">
+                              <input class="form-check-input" type="radio" name="role" value="student" required="true"> I'm looking for a job
+                              <span class="circle">
+                                <span class="check"></span>
+                              </span>
+                            </label>
+                          </div>
+                          <div class="form-check form-check-radio form-check-inline">
+                            <label class="form-check-label">
+                              <input class="form-check-input" type="radio" name="role" value="employer" required="true"> I'm looking to hire
+                              <span class="circle">
+                                <span class="check"></span>
+                              </span>
+                            </label>
+                          </div>
+                        </div>
                         <div class="row justify-content-center">
                           <div class="col-lg-6">
                             <div class="input-group form-control-lg">
@@ -56,7 +76,7 @@
                               </div>
                               <div class="form-group bmd-form-group">
                                 <label for="firstname" class="bmd-label-floating">First Name *</label>
-                                <input type="text" class="form-control" id="firstname" name="firstName" required="" aria-required="true">
+                                <input type="text" class="form-control" id="firstname" name="firstName" required="" aria-required="true" value="<%= oldInput.firstName %>">
                               </div>
                             </div>
                           </div>
@@ -69,7 +89,7 @@
                               </div>
                               <div class="form-group bmd-form-group">
                                 <label for="lastname" class="bmd-label-floating">Last Name *</label>
-                                <input type="text" class="form-control" id="lastname" name="lastName" required="" aria-required="true">
+                                <input type="text" class="form-control" id="lastname" name="lastName" required="" aria-required="true" value="<%= oldInput.lastName%>">
                               </div>
                             </div>
                           </div>
@@ -80,9 +100,14 @@
                                   <i class="material-icons">email</i>
                                 </span>
                               </div>
-                              <div class="form-group bmd-form-group">
+                              <div class="form-group bmd-form-group <%= validationErrors.find(e => e.param === 'email') ? 'has-danger' : '' %>">
                                 <label for="email" class="bmd-label-floating">Email *</label>
-                                <input type="email" class="form-control" id="email" name="email" required="" aria-required="true">
+                                <input type="email" class="form-control" id="email" name="email" required="" aria-required="true" value="<%= oldInput.email %>">
+                                <% err = validationErrors.find(e => e.param === 'email');
+                                  if (err) {
+                                %> 
+                                <label class="error" for="email"><%= err.msg %></label>
+                                <% } %>
                               </div>
                             </div>
                           </div>
@@ -95,7 +120,7 @@
                               </div>
                               <div class="form-group bmd-form-group">
                                 <label for="phone" class="bmd-label-floating">Phone *</label>
-                                <input type="text" class="form-control" id="phone" name="phone" required="" aria-required="true">
+                                <input type="text" class="form-control" id="phone" name="phone" required="" aria-required="true" value="<%= oldInput.phone %>">
                               </div>
                             </div>
                           </div>
@@ -106,9 +131,14 @@
                                   <i class="material-icons">lock</i>
                                 </span>
                               </div>
-                              <div class="form-group bmd-form-group">
+                              <div class="form-group bmd-form-group <%= validationErrors.find(e => e.param === 'password') ? 'has-danger' : '' %>">
                                 <label for="password" class="bmd-label-floating">Password *</label>
-                                <input type="password" class="form-control" id="password" name="password" required="" aria-required="true">
+                                <input type="password" class="form-control" id="password" name="password" required="true" aria-required="true" value="<%= oldInput.password %>">
+                                <% err = validationErrors.find(e => e.param === 'password');
+                                  if (err) {
+                                %> 
+                                <label class="error" for="password"><%= err.msg %></label>
+                                <% } %>                              
                               </div>
                             </div>
                           </div>
@@ -119,9 +149,14 @@
                                     <i class="material-icons">lock</i>
                                   </span>
                                 </div>
-                                <div class="form-group bmd-form-group">
+                                <div class="form-group bmd-form-group <%= validationErrors.find(e => e.param === 'confirmPassword') ? 'has-danger' : '' %>">
                                   <label for="confirmpassword" class="bmd-label-floating">Confirm Password *</label>
-                                  <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required="" aria-required="true">
+                                  <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required="true" aria-required="true" value="<%= oldInput.confirmPassword %>">
+                                  <% err = validationErrors.find(e => e.param === 'confirmPassword');
+                                    if (err) {
+                                  %> 
+                                  <label class="error" for="confirmPassword"><%= err.msg %></label>
+                                  <% } %>
                                 </div>
                               </div>
                             </div>
@@ -141,10 +176,10 @@
                         <div class="row justify-content-center">
                           <div class="col-lg-12">
                             <div class="row">
-                              <% for (let skill of skills) { %>
+                              <% for (let skill of skillsFromDb) { %>
                                 <div class="col-sm-3">
                                   <div class="choice" data-toggle="wizard-checkbox">
-                                    <input type="checkbox" name="jobb" value="<%= skill.name %>">
+                                    <input type="checkbox" name="skills" value="<%= skill.name%>-<%=skill._id %>">
                                     <div class="icon">
                                       <i class="<%= skill.icon %>"></i>
                                     </div>
