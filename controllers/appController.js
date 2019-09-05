@@ -23,11 +23,18 @@ exports.getDashboard = async (req, res) => {
   try {
     const accountStatus = await codility.getAccountStatus();
     const testsCount = await codility.getTestsCount();
+    const uninterviewedStudents = await User.find({ isInterviewed: false });
+    const uninterviewedStudentsCount = uninterviewedStudents.length;
+    const approvedStudents = await User.find({ isApproved: true });
+    const approvedStudentsCount = approvedStudents.length;
+
     return res.render('dashboard', {
       pageTitle: 'Dashboard',
       sidebarPos: 'dashboard',
       accountStatus,
       testsCount,
+      uninterviewedStudentsCount,
+      approvedStudentsCount,
     });
   } catch (error) {
     return res.status(500).render('./error/error', {
