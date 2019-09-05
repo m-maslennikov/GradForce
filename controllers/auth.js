@@ -238,9 +238,9 @@ exports.postRegister = (req, res, next) => {
 exports.postRegisterWizard = async (req, res, next) => {
   try {
     const {
-      email, password, firstName, lastName, phone, skills, role,
+      email, password, firstName, lastName, phone, skills,
     } = req.body;
-    // const role = 'student';
+    const role = 'student';
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
