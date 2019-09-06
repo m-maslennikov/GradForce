@@ -35,7 +35,7 @@ router.post('/profile/work/delete', isAuth, controller.deleteMyWork);
 
 router.post('/profile/skill', isAuth, controller.saveMySkill);
 // router.post('/profile/skill/edit', isAuth, controller.editMySkill);
-// router.post('/profile/skill/delete', isAuth, controller.deleteMySkill);
+router.post('/profile/skill/delete', isAuth, controller.deleteMySkill);
 
 router.post('/skill/verify', isAdmin, controller.verifySkill);
 

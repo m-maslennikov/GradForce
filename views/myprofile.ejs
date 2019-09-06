@@ -43,6 +43,11 @@
               </div>
               <!-- End My Skills -->
               <!-- My Tests -->
+              <% for (let skill of user.skills) { %>
+                <form action="/profile/skill/delete" method="post" id="deleteMySkill<%= skill._id %>">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                </form>
+              <% } %>
               <div class="card">
                 <div class="card-header card-header-primary card-header-icon">
                   <div class="card-icon">
@@ -97,6 +102,7 @@
                             <% } else if (skill.result !== null) { %>
                             <%= skill.result %> / <%= skill.max_result %>
                             <% } %>
+                            <button type="submit" value="<%= skill._id %>" name="skillId" class="btn btn-danger btn-just-icon btn-sm" form="deleteMySkill<%= skill._id %>"><i class="material-icons">clear</i></button>
                           </td>
                         </tr>
                         <% } %>
