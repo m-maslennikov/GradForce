@@ -114,6 +114,16 @@ exports.getMyProfile = async (req, res) => {
       throw new Error('User not found');
     }
 
+    for (let i = 0; i < skills.length; i++) {
+      for (let j = 0; j < user.skills.length;) {
+        const currentDbSkill = skills[i]._id.toString();
+        const currentUserSkill = user.skills[j].skillId.toString();
+        if (currentDbSkill !== currentUserSkill) { j++; } else {
+          skills.splice(i, 1);
+        }
+      }
+    }
+
     return res.render('myprofile', {
       pageTitle: 'My Profile',
       sidebarPos: 'myprofile',
@@ -446,6 +456,25 @@ exports.saveMySkill = async (req, res) => {
   }
 };
 
+// ==================
+// REMOVE MY SKILL
+// ==================
+
+exports.deleteMySkill = async (req, res) => {
+  console.log(`Saving skill: ${req.session.user.email}`);
+  try {
+    const user = await User.findById(req.session.user._id);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    await user.skills.pull({ _id: req.body.skillId });
+    await user.save();
+    return res.redirect('/profile');
+  } catch (error) {
+    console.log(error);
+    return res.status(500).redirect('/profile');
+  }
+};
 
 // ============
 // VERIFY SKILL
