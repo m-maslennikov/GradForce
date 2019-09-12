@@ -12,20 +12,21 @@
       <div class="collapse navbar-collapse justify-content-end">
         <ul class="navbar-nav">
           <% if (isLoggedIn) { %>
-          <% if (currentUser.role === 'admin') { %>
+          <% if (userRole === 'admin') { %>
           <li class="nav-item">
             <a href="/dashboard" class="nav-link">
               <i class="material-icons">dashboard</i> Dashboard
             </a>
           </li>
+          <% } else { %>
+            <li class="nav-item">
+              <a href="/profile" class="nav-link">
+                <i class="material-icons">person</i> My Profile
+              </a>
+            </li>
           <% } %>
-          <li class="nav-item">
-            <a href="/profile" class="nav-link">
-              <i class="material-icons">person</i> My Profile
-            </a>
-          </li>
           <li class="nav-item ">
-            <form action="/auth/logout" method="post">
+            <form action="/logout" method="post">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <a href="#" onclick="this.parentNode.submit(); return false;" class="nav-link" >
                 <i class="material-icons">exit_to_app</i> Logout

@@ -1,0 +1,10 @@
+{
+  "realm": "gradforce",
+  "auth-server-url": "https://auth.7wolf.org/auth",
+  "ssl-required": "external",
+  "resource": "web",
+  "credentials": {
+    "secret": "a47e05f2-54c6-4533-a40d-5e8a23d52a54"
+  },
+  "confidential-port": 0
+}

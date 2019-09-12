@@ -7,7 +7,12 @@ const codility = require('../utils/codility');
 
 
 exports.getRoot = (req, res) => {
-  res.redirect('/auth/register');
+  if (req.kauth.grant.access_token.content.resource_access.web.roles[0] === 'student') {
+    res.redirect('/profile');
+  }
+  if (req.kauth.grant.access_token.content.resource_access.web.roles[0] === 'admin') {
+    res.redirect('/dashboard');
+  }
 };
 
 
@@ -18,8 +23,6 @@ exports.getRoot = (req, res) => {
 
 // SHOW DASHBOARD PAGE
 exports.getDashboard = async (req, res) => {
-  console.log(`Viewing dashboard: ${req.session.user.email}`);
-
   try {
     const accountStatus = await codility.getAccountStatus();
     const testsCount = await codility.getTestsCount();
@@ -50,7 +53,7 @@ exports.getDashboard = async (req, res) => {
 exports.getAllStudents = async (req, res) => {
   try {
     const students = await User.find({ role: 'student' });
-    res.render('students', {
+    return res.render('students', {
       students,
       pageTitle: 'All students',
       sidebarPos: 'allStudents',
@@ -69,7 +72,7 @@ exports.getAllStudents = async (req, res) => {
 exports.getInterviewedStudents = async (req, res) => {
   try {
     const students = await User.find({ role: 'student', isInterviewed: true });
-    res.render('students', {
+    return res.render('students', {
       students,
       pageTitle: 'Interviewed students',
       sidebarPos: 'interviewedStudents',
@@ -88,7 +91,7 @@ exports.getInterviewedStudents = async (req, res) => {
 exports.getApprovedStudents = async (req, res) => {
   try {
     const students = await User.find({ role: 'student', isApproved: true });
-    res.render('students', {
+    return res.render('students', {
       students,
       pageTitle: 'Approved students',
       sidebarPos: 'approvedStudents',
@@ -105,10 +108,8 @@ exports.getApprovedStudents = async (req, res) => {
 
 // SHOW MY PROFILE PAGE
 exports.getMyProfile = async (req, res) => {
-  console.log(`Viewing profile: ${req.session.user.email}`);
-
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     const skills = await Skill.find({});
     if (!user) {
       throw new Error('User not found');
@@ -142,10 +143,8 @@ exports.getMyProfile = async (req, res) => {
 
 // SHOW MY EDUCATION PAGE
 exports.getMyEducation = async (req, res) => {
-  console.log(`Viewing education: ${req.session.user.email}`);
-
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -167,10 +166,8 @@ exports.getMyEducation = async (req, res) => {
 
 // SHOW MY WORK PAGE
 exports.getMyWork = async (req, res) => {
-  console.log(`Viewing work: ${req.session.user.email}`);
-
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -192,8 +189,6 @@ exports.getMyWork = async (req, res) => {
 
 // SHOW PROFILE BT ID PAGE
 exports.getProfileById = async (req, res) => {
-  console.log(`Viewing profile ID: ${req.params.id} - ${req.session.user.email}`);
-
   try {
     const user = await User.findById(req.params.id);
     const skills = await Skill.find({});
@@ -219,8 +214,6 @@ exports.getProfileById = async (req, res) => {
 
 // SHOW SKILLS PAGE
 exports.getSkills = async (req, res) => {
-  console.log(`Viewing skills page: ${req.session.user.email}`);
-
   try {
     const skills = await Skill.find({});
     if (!skills) {
@@ -246,9 +239,8 @@ exports.getSkills = async (req, res) => {
 // SAVE MY PROFILE
 // ===============
 exports.saveMyProfile = async (req, res) => {
-  console.log(`Saving profile: ${req.session.user.email}`);
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -271,7 +263,6 @@ exports.saveMyProfile = async (req, res) => {
 // SAVE PROFILE BY ID
 // ==================
 exports.saveProfileById = async (req, res) => {
-  console.log(`Saving profile: ${req.params.id}`);
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
@@ -298,9 +289,8 @@ exports.saveProfileById = async (req, res) => {
 // SAVE MY EDUCATION
 // =================
 exports.saveMyEducation = async (req, res) => {
-  console.log(`Saving education: ${req.session.user.email}`);
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -314,8 +304,11 @@ exports.saveMyEducation = async (req, res) => {
     await user.save();
     return res.redirect('/education');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/education');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -323,7 +316,6 @@ exports.saveMyEducation = async (req, res) => {
 // EDIT MY EDUCATION
 // =================
 exports.editMyEducation = async (req, res) => {
-  console.log(`Saving education: ${req.session.user.email}`);
   try {
     await User.update({ 'education._id': req.body.educationId }, {
       $set: {
@@ -334,11 +326,13 @@ exports.editMyEducation = async (req, res) => {
         'education.$.endDate': req.body.educationEndDate,
       },
     });
-    // await user.save();
     return res.redirect('/education');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/education');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -346,9 +340,8 @@ exports.editMyEducation = async (req, res) => {
 // DELETE MY EDUCATION
 // ===================
 exports.deleteMyEducation = async (req, res) => {
-  console.log(`Saving education: ${req.session.user.email}`);
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -356,8 +349,11 @@ exports.deleteMyEducation = async (req, res) => {
     await user.save();
     return res.redirect('/education');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/education');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -366,9 +362,8 @@ exports.deleteMyEducation = async (req, res) => {
 // SAVE MY WORK
 // ============
 exports.saveMyWork = async (req, res) => {
-  console.log(`Saving profile: ${req.session.user.email}`);
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -384,8 +379,11 @@ exports.saveMyWork = async (req, res) => {
     await user.save();
     return res.redirect('/work');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/work');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -393,7 +391,6 @@ exports.saveMyWork = async (req, res) => {
 // EDIT MY WORK
 // ============
 exports.editMyWork = async (req, res) => {
-  console.log(`Saving work: ${req.session.user.email}`);
   try {
     await User.update({ 'work._id': req.body.workId }, {
       $set: {
@@ -409,8 +406,11 @@ exports.editMyWork = async (req, res) => {
     // await user.save();
     return res.redirect('/work');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/work');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -418,9 +418,8 @@ exports.editMyWork = async (req, res) => {
 // DELETE MY WORK
 // ==============
 exports.deleteMyWork = async (req, res) => {
-  console.log(`Saving work: ${req.session.user.email}`);
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -428,8 +427,11 @@ exports.deleteMyWork = async (req, res) => {
     await user.save();
     return res.redirect('/work');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/work');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -438,9 +440,8 @@ exports.deleteMyWork = async (req, res) => {
 // SAVE MY SKILL
 // =============
 exports.saveMySkill = async (req, res) => {
-  console.log(`Saving skill: ${req.session.user.email}`);
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -451,8 +452,11 @@ exports.saveMySkill = async (req, res) => {
     await user.save();
     return res.redirect('/profile');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -461,9 +465,8 @@ exports.saveMySkill = async (req, res) => {
 // ==================
 
 exports.deleteMySkill = async (req, res) => {
-  console.log(`Saving skill: ${req.session.user.email}`);
   try {
-    const user = await User.findById(req.session.user._id);
+    const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     if (!user) {
       throw new Error('User not found');
     }
@@ -471,8 +474,11 @@ exports.deleteMySkill = async (req, res) => {
     await user.save();
     return res.redirect('/profile');
   } catch (error) {
-    console.log(error);
-    return res.status(500).redirect('/profile');
+    return res.status(500).render('./error/error', {
+      pageTitle: '500',
+      statusCode: '500',
+      error,
+    });
   }
 };
 
@@ -481,7 +487,6 @@ exports.deleteMySkill = async (req, res) => {
 // ============
 exports.verifySkill = async (req, res) => {
   const { userId, userSkillId, skillLevel } = req.body;
-  console.log('Approving skill');
   try {
     await User.update({ 'skills._id': userSkillId }, {
       $set: {
@@ -507,7 +512,6 @@ exports.generateTestLink = async (req, res) => {
   const {
     email, userSkillId, globalSkillId, userId,
   } = req.body;
-  console.log(`Generating a ${globalSkillId} test link for: ${email}`);
   try {
     const result = await codility.generateTestLink(email, globalSkillId);
     await User.update({ 'skills._id': userSkillId }, {
@@ -538,10 +542,9 @@ exports.refreshSkillInfo = async (req, res) => {
   const {
     userSkillId, sessionUrl, userId,
   } = req.body;
-  console.log('Refreshing skill info');
   try {
     const result = await codility.get(sessionUrl);
-    const updateResult = await User.update({ 'skills._id': userSkillId }, {
+    await User.update({ 'skills._id': userSkillId }, {
       $set: {
         'skills.$.test_link': result.test_link,
         'skills.$.report_link': result.report_link,
@@ -570,11 +573,9 @@ exports.cancelTest = async (req, res) => {
   const {
     cancelUrl, userSkillId, userId,
   } = req.body;
-  console.log('Cancelling test link');
   try {
-    const result = await codility.post(cancelUrl);
-    console.log(result);
-    const updateResult = await User.update({ 'skills._id': userSkillId }, {
+    await codility.post(cancelUrl);
+    await User.update({ 'skills._id': userSkillId }, {
       $set: {
         'skills.$.test_link': null,
         'skills.$.report_link': null,
@@ -601,7 +602,6 @@ exports.cancelTest = async (req, res) => {
 // ===================
 exports.getEmbeddedReport = async (req, res) => {
   const { sessionUrl } = req.body;
-  console.log('Retrieving report');
   try {
     const result = await codility.post(`${sessionUrl}embed_report/`);
     return res.status(301).redirect(result.url);
@@ -621,10 +621,8 @@ exports.getEmbeddedReport = async (req, res) => {
 exports.syncCodilitySkills = async (req, res) => {
   try {
     await codility.syncSkills();
-    console.log('Codility skills synced');
     return res.redirect('/skills');
   } catch (error) {
-    console.log(`Something wrong while syncin Codility skills: \n${error}`);
     return res.status(500).render('./error/error', {
       pageTitle: '500',
       statusCode: '500',
