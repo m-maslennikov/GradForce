@@ -52,7 +52,7 @@ exports.getDashboard = async (req, res) => {
 // SHOW ALL STUDENTS PAGE
 exports.getAllStudents = async (req, res) => {
   try {
-    const students = await User.find({ role: 'student' });
+    const students = await User.find({});
     return res.render('students', {
       students,
       pageTitle: 'All students',
@@ -71,7 +71,7 @@ exports.getAllStudents = async (req, res) => {
 // SHOW INTERVIEWED STUDENTS PAGE
 exports.getInterviewedStudents = async (req, res) => {
   try {
-    const students = await User.find({ role: 'student', isInterviewed: true });
+    const students = await User.find({ isInterviewed: true });
     return res.render('students', {
       students,
       pageTitle: 'Interviewed students',
@@ -90,7 +90,7 @@ exports.getInterviewedStudents = async (req, res) => {
 // SHOW APPROVED STUDENTS PAGE
 exports.getApprovedStudents = async (req, res) => {
   try {
-    const students = await User.find({ role: 'student', isApproved: true });
+    const students = await User.find({ isApproved: true });
     return res.render('students', {
       students,
       pageTitle: 'Approved students',
@@ -110,20 +110,13 @@ exports.getApprovedStudents = async (req, res) => {
 exports.getMyProfile = async (req, res) => {
   try {
     const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
-    const skills = await Skill.find({});
+    let skills = await Skill.find({});
+
     if (!user) {
       throw new Error('User not found');
     }
 
-    for (let i = 0; i < skills.length; i++) {
-      for (let j = 0; j < user.skills.length;) {
-        const currentDbSkill = skills[i]._id.toString();
-        const currentUserSkill = user.skills[j].skillId.toString();
-        if (currentDbSkill !== currentUserSkill) { j++; } else {
-          skills.splice(i, 1);
-        }
-      }
-    }
+    skills = skills.filter((skill) => !user.skills.map((skill) => skill.skillId).includes(skill._id));
 
     return res.render('myprofile', {
       pageTitle: 'My Profile',
