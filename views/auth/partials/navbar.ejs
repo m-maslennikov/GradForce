@@ -25,7 +25,7 @@
             </a>
           </li>
           <li class="nav-item ">
-            <form action="/auth/logout" method="post">
+            <form action="/logout" method="post">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <a href="#" onclick="this.parentNode.submit(); return false;" class="nav-link" >
                 <i class="material-icons">exit_to_app</i> Logout

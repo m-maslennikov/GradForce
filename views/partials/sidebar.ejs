@@ -13,7 +13,7 @@
         </div>
         <div class="sidebar-wrapper">
           <ul class="nav">
-            <% if (currentUser.role === 'student') { %>
+            <% if (userRole === 'student') { %>
             <li class="nav-item <%= sidebarPos === 'myprofile' ? 'active' : '' %>">
               <a class="nav-link" href="/profile">
                 <i class="material-icons">person</i>
@@ -33,7 +33,7 @@
               </a>
             </li>
             <% } %>
-            <% if (currentUser.role === 'admin') { %>
+            <% if (userRole === 'admin') { %>
             <li class="nav-item <%= sidebarPos === 'dashboard' ? 'active' : '' %>">
               <a class="nav-link" href="/dashboard">
                 <i class="material-icons">dashboard</i>
@@ -62,18 +62,6 @@
               <a class="nav-link" href="/skills">
                 <i class="material-icons">assignment</i>
                 <p> Skills </p>
-              </a>
-            </li>
-            <li class="nav-item <%= sidebarPos === 'employers' ? 'active' : '' %>">
-              <a class="nav-link" href="/employers">
-                <i class="material-icons">supervisor_account</i>
-                <p> Employers </p>
-              </a>
-            </li>
-            <li class="nav-item <%= sidebarPos === 'calendar' ? 'active' : '' %>">
-              <a class="nav-link" href="/calendar">
-                <i class="material-icons">date_range</i>
-                <p> Calendar </p>
               </a>
             </li>
             <% } %>
