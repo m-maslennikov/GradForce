@@ -7,6 +7,7 @@ const codility = require('../utils/codility');
 
 
 exports.getRoot = (req, res) => {
+  // and here we have duplication of role names
   if (req.kauth.grant.access_token.content.resource_access.web.roles[0] === 'student') {
     res.redirect('/profile');
   }
@@ -59,6 +60,7 @@ exports.getAllStudents = async (req, res) => {
       sidebarPos: 'allStudents',
     });
   } catch (error) {
+    // I suppose there is a way to handle errors globally. now it's duplication
     return res.status(500).render('./error/error', {
       pageTitle: '500',
       statusCode: '500',
@@ -112,6 +114,7 @@ exports.getMyProfile = async (req, res) => {
     const user = await User.findOne({ kcid: req.kauth.grant.access_token.content.sub });
     let skills = await Skill.find({});
 
+    // not sure, but it could be 404 error instead of 500
     if (!user) {
       throw new Error('User not found');
     }
@@ -264,6 +267,7 @@ exports.saveProfileById = async (req, res) => {
     user.firstName = req.body.firstName;
     user.lastName = req.body.lastName;
     user.phone = req.body.phone;
+    // user.isInterviewed = req.body.isInterviewed === 'true'
     req.body.isInterviewed === 'true' ? user.isInterviewed = true : user.isInterviewed = false;
     req.body.isApproved === 'true' ? user.isApproved = true : user.isApproved = false;
     await user.save();

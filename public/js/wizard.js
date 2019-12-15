@@ -1,7 +1,11 @@
+// can not find how is this file used. 
+
+// variable without let/const
 wizard = {
 
     initMaterialWizard: function() {
         // Code for the Validator
+        // `var` - legacy. `let` or `const` nowadays
         var $validator = $('.card-wizard form').validate({
             rules: {
                 firstname: {
@@ -47,6 +51,7 @@ wizard = {
         
         onInit: function(tab, navigation, index) {
             //check number of tabs and fill the entire row
+            // unused variable
             var $total = navigation.find('li').length;
             var $wizard = navigation.closest('.card-wizard');
             
@@ -60,8 +65,10 @@ wizard = {
         },
         
         onTabClick: function(tab, navigation, index) {
+            // why $ sign in the variable name?
             var $valid = $('.card-wizard form').valid();
             
+            // return $valid
             if (!$valid) {
                 return false;
             } else {
@@ -162,9 +169,11 @@ wizard = {
     });
     
     function refreshAnimation($wizard, index) {
+        // lots of variables without let/const. dangerous for js
         $total = $wizard.find('.nav li').length;
         $li_width = 100 / $total;
         
+        // haven't seen such variable naming convention in js. almost always it's camelCase
         total_steps = $wizard.find('.nav li').length;
         move_distance = $wizard.width() / total_steps;
         index_temp = index;
@@ -185,6 +194,8 @@ wizard = {
         
         $current = index + 1;
         
+        // smg wrong here. seems like same as 
+        // $current == 1 || $current == total_steps || mobile_device
         if ($current == 1 || (mobile_device == true && (index % 2 == 0))) {
             move_distance -= 8;
         } else if ($current == total_steps || (mobile_device == true && (index % 2 == 1))) {
@@ -192,6 +203,7 @@ wizard = {
         }
         
         if (mobile_device) {
+            // one line?
             vertical_level = parseInt(index / 2);
             vertical_level = vertical_level * 38;
         }

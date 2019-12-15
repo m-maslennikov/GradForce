@@ -165,6 +165,7 @@
   </script>
   <script>
     function addEducForm(){
+    // HTML as string stinks. invisible dom element to be copied would be clear
     $('#newEducationForm').html('<form method="POST" action="/profile/education">\n' +
                           '<input type="hidden" name="_csrf" value="<%= csrfToken %>">\n' +
                           '<div class="row">\n' +

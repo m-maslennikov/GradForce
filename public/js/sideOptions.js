@@ -1,3 +1,4 @@
+// eslint-disable - smell. eslint is cool and better leverage it
 /* eslint-disable no-alert */
 /* eslint-disable func-names */
 /* eslint-disable prefer-arrow-callback */
@@ -164,6 +165,7 @@ $(document).ready(function () {
       }, 180);
 
       // we stop the simulation of Window Resize after the animations are completed
+      // what if `change` will fire once again before this timeout happens?
       setTimeout(function () {
         clearInterval(simulateWindowResize);
       }, 1000);

@@ -3,6 +3,7 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+// unused variable
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const MongoDBStore = require('connect-mongodb-session')(session);
@@ -46,10 +47,12 @@ app.use(setViews);
 
 
 // ======
-// ROUTES
+// ROUTES usually in the separate file
 // ======
 
 // GET
+// 'admin', 'student' repeated many times. worth to make constants
+// maybe those constants could be reused in the keycloack config file
 app.get('/', keycloak.protect(), controller.getRoot);
 app.get('/dashboard', keycloak.protect('admin'), controller.getDashboard);
 app.get('/profile', keycloak.protect('student'), controller.getMyProfile);
@@ -63,6 +66,7 @@ app.get('/students/interviewed', keycloak.protect('admin'), controller.getInterv
 
 
 // POST
+// usually updates are PUT and removal is DELETE verbs. comments with reasoning would be suitable here
 app.post('/profile/save', keycloak.protect('student'), controller.saveMyProfile);
 app.post('/profile/save/:id', keycloak.protect('admin'), controller.saveProfileById);
 app.post('/profile/education', keycloak.protect('student'), controller.saveMyEducation);
@@ -97,5 +101,6 @@ mongoose.connect(process.env.MONGODB_URL, {
     console.log(`Listening on port: ${port}`);
   });
 }).catch((err) => {
+  // console.error ?
   console.log(`Cannot connect to DB: ${err}`);
 });

@@ -15,6 +15,7 @@ module.exports = async (req, res, next) => {
     res.locals.csrfToken = req.csrfToken();
     return next();
   } catch (error) {
+    // `status(500)` and `statusCode: '500'` seems like duplication
     return res.status(500).render('./error/error', {
       pageTitle: '500',
       statusCode: '500',

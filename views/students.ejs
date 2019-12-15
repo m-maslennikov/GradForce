@@ -53,6 +53,7 @@
                           <td>
                             <% if(student.skills.length > 0) { %>
                               <% for (let skill of student.skills) { %>
+                                <!-- is there switch statement for this rendering engine? if seems noisy -->
                                 <span
                                   class="skill badge 
                                   <%= skill.skillLevel === '' ? 'badge-default' : '' %>
@@ -67,6 +68,7 @@
                               <span class="badge badge-default">N/A</span>
                             <% } %>
                           </td>
+                          <!-- if possible - would be nice to use some static code analyzer -->
                           <td><i class="material-icons"><%= student.isInterviewed ? 'done' : '' %></i></td>
                           <!-- <td class="text-right">
                             <a href="/profile/<%= student._id %>" class="btn btn-link btn-default btn-just-icon"><i class="material-icons">assignment_ind</i></a>

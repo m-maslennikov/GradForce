@@ -116,7 +116,16 @@
                               <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                               <input type="hidden" name="userSkillId" value="<%= skill._id %>">
                               <input type="hidden" name="userId" value="<%= user._id %>">
-                              <button type="submit" name="skillLevel" value="junior" class="btn btn-success btn-just-icon btn-sm" data-toggle="tooltip" data-placement="top" title="Set level: Junior"><i class="material-icons md-16">star_border</i></button>
+                              <!-- way more easy to red tags when attributes aligned vertically -->
+                              <button type="submit" 
+                                      name="skillLevel" 
+                                      value="junior" 
+                                      class="btn btn-success btn-just-icon btn-sm" 
+                                      data-toggle="tooltip" 
+                                      data-placement="top" 
+                                      title="Set level: Junior">
+                                <i class="material-icons md-16">star_border</i>
+                              </button>
                               <button type="submit" name="skillLevel" value="middle" class="btn btn-warning btn-just-icon btn-sm" data-toggle="tooltip" data-placement="top" title="Set level: Middle"><i class="material-icons md-16">star_half</i></button>
                               <button type="submit" name="skillLevel" value="senior" class="btn btn-danger btn-just-icon btn-sm" data-toggle="tooltip" data-placement="top" title="Set level: Senior"><i class="material-icons md-16">star</i></button>
                             </form>
@@ -209,6 +218,8 @@
                       </div>
                     </div>
                     <div class="clearfix">
+                      <!-- FYI type="submit" is tricky. typical bug - user places focus on some element in form like item
+                       in the opened drop down menu, press enter and form submitted -->
                       <button type="submit" class="btn btn-success btn-just-icon pull-right"><i class="material-icons">save</i></button>
                     </div>
                   </form>
